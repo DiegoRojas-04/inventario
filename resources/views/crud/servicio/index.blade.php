@@ -73,13 +73,13 @@
                 <td>
                     <div class="btn-group" role="group">
                         <a href="{{ url('/servicio/'.$servicio->id.'/edit')}}" class="text-decoration-none text-white">
-                        <button type="submit" class="btn btn-warning ">Editar</button></a>
+                            <button type="submit" class="btn btn-warning "><i class="fa fa-file" aria-hidden="true"></i></button></a>
                     </div>
                     <div class="btn-group" role="group">
                         <form action="{{ url('/servicio/'.$servicio->id)}}" method="POST">
                             {{csrf_field()}}
                             {{method_field('DELETE')}}
-                            <button type="submit" class="btn btn-danger">Eliminar</button>
+                            <button type="submit" class="btn btn-danger"><i class="fa fa-trash" aria-hidden="true"></i></button>
                         </form>
                     </div>
                 </td>

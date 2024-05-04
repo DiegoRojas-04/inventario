@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreInsumoRequest;
 use App\Models\Categoria;
 use App\Models\Insumo;
 use App\Models\Marca;
@@ -24,16 +25,16 @@ class InsumoController extends Controller
      */
     public function create()
     {
-        $categorias = Categoria::all();
-        $marcas = Marca::all();
-        $presentaciones = Presentacione::all();
+        $categorias = Categoria::where('estado', 1)->get();
+        $marcas = Marca::where('estado', 1)->get();
+        $presentaciones = Presentacione::where('estado', 1)->get();
         return view('crud.insumo.create', compact('categorias','presentaciones','marcas'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreInsumoRequest $request)
     {
         $datosInsumo=request()->except('_token');       
         Insumo::insert($datosInsumo);

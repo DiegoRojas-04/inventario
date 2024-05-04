@@ -25,7 +25,12 @@
                 <label>Descripcion:</label>
                 <input type="text" name="descripcion" class="form-control" value="{{$insumo->descripcion}}">
             </div>
-
+            
+            <div class="col-md-4">
+                <label>Registro Sanitario / Invima:</label>
+                <input type="text" name="invima" class="form-control" value="{{$insumo->invima}}">
+            </div>
+  
             <div class="col-md-4">
                 <label>Categoria:</label>
                 <select data-live-search="true" name="id_categoria" id="id_categoria" class="form-control selectpicker show-tick">
@@ -52,12 +57,6 @@
                     @endforeach
                 </select>
             </div>
-
-            <div class="col-md-4">
-                <label>Registro Sanitario / Invima:</label>
-                <input type="text" name="invima" class="form-control" value="{{$insumo->invima}}">
-            </div>
-  
               
             <div class="col-md-6">
                 <label>Fecha de vencimiento:</label>

@@ -14,7 +14,7 @@ class MarcaController extends Controller
      */
     public function index()
     {
-      $datosMarca['marcas']=Marca::paginate(5);
+      $datosMarca['marcas']=Marca::paginate(7);
       return view('crud.marca.index',$datosMarca);    
     }
 
@@ -70,10 +70,23 @@ class MarcaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
-    {
-        Marca::destroy($id);
-        return redirect('marca')->with('Mensaje','Marca');
-  
+    public function destroy($id)
+  {
+    $marca = Marca::find($id);
+    if ($marca) {
+      if ($marca->estado == 1) {
+        $marca->update([
+          'estado' => 0
+        ]);
+        return redirect('marca')->with('Mensaje', 'marca eliminada');
+      } else {
+        $marca->update([
+          'estado' => 1
+        ]);
+        return redirect('marca')->with('Mensaje3', 'marca restaurada');
+      }
+    } else {
+      return redirect('marca')->with('Mensaje', 'marca no encontrada');
     }
+  }
 }

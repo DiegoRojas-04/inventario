@@ -22,7 +22,7 @@
 
                             <div class="col-md-12 mb-2">
                                 <label class="form-label">Insumos:</label>
-                                <select data-size="5" title="Seleccionar Presentacion..." data-live-search="true"
+                                <select data-size="5" title="Seleccionar Insumos..." data-live-search="true"
                                     name="nombre" id="nombre" data-style="btn-white"
                                     class="form-control selectpicker show-tick ">
                                     @foreach ($insumos as $item)
@@ -34,15 +34,6 @@
                                 <label class="form-label">Cantidad:</label>
                                 <input type="number" name="stock" id="stock" class="form-control" placeholder="0">
                             </div>
-
-                            {{-- <div class="col-md-6 mb-2">
-                            <label class="form-label">Categoria:</label>
-                            <select data-size="5" title="Seleccionar Categoria..." data-live-search="true" name="categoria" id="categoria" data-style="btn-white" class="form-control selectpicker show-tick ">
-                                @foreach ($categorias as $item)
-                                    <option value="{{$item->id}}">{{$item->nombre}}</option>
-                                @endforeach
-                            </select>
-                         </div> --}}
 
                             <div class="col-md-12 mb-2 mt-2 text-right">
                                 <button id="btn_agregar" class="btn btn-primary" type="button">Agregar</button>
@@ -62,9 +53,9 @@
                                         <tbody>
                                             <tr>
                                                 <th></th>
-                                                <th></th>
-                                                <th></th>
-                                                <th></th>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
                                             </tr>
                                         </tbody>
                                         <tfoot>
@@ -128,6 +119,11 @@
                                 <label>Fecha:</label>
                                 <input readonly type="date" name="fecha" id="fecha" class="form-control"
                                     value="<?php echo date('Y-m-d'); ?>">
+                                   <?php
+                                    use Carbon\Carbon;
+                                    $fecha_hora = Carbon::now()->toDateTimeString();
+                                    ?>
+                                <input type="hidden" name="fecha_hora" value="{{$fecha_hora}}">
                             </div>
 
                             <div class="col-md-12 mb-2 text-center">
@@ -173,26 +169,26 @@
     <script>
         $(document).ready(function() {
             $('#btn_agregar').click(function() {
-                agregarProducto();
+                agregarinsumo();
             });
         });
 
         let cont = 0;
         let total = 0;
 
-        function agregarProducto() {
-            let id_producto = $('#nombre').val();
-            let nameproducto = $('#nombre option:selected').text();
+        function agregarinsumo() {
+            let id_insumo = $('#nombre').val();
+            let nameinsumo = $('#nombre option:selected').text();
             let cantidad = parseInt($('#stock').val());
 
-            if (id_producto != '' && nameproducto != '' && cantidad != '') {
+            if (id_insumo != '' && nameinsumo != '' && cantidad != '') {
 
                 if (cantidad > 0 && (cantidad % 1 == 0)) {
 
                     let fila = '<tr id="fila' + cont + '">' +
                         '<th>' + (cont + 1) + '</th>' +
-                        '<td>' + nameproducto + '</td>' +
-                        '<td>' + cantidad + '</td>' +
+                        '<td><input type="hidden" name="arrayidinsumo[]" value="' + id_insumo + '">' + nameinsumo + '</td>' +
+                        '<td><input type="hidden" name="arraycantidad[]" value="' + cantidad + '">' + cantidad + '</td>' +
                         '<td><button class="btn btn-danger" type="button" onClick="eliminarInsumo(' + cont +
                         ')"><i class="fa fa-trash"></i></button></td>' +
                         '</tr>';

@@ -8,6 +8,19 @@ use Illuminate\Database\Eloquent\Model;
 class Insumo extends Model
 {
     use HasFactory;
+    protected $fillable= [
+        'nombre',
+        'descripcion',
+        'stock',
+        'invima',
+        'vencimiento',
+        'lote',
+        'riesgo',
+        'vida_util',
+        'id_categoria',
+        'id_marca',
+        'id_presentacion',
+    ];
 
 
     public function compras(){

@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreCompraRequest;
 use App\Models\Categoria;
 use App\Models\Compra;
 use App\Models\Comprobante;
 use App\Models\Insumo;
 use App\Models\Presentacione;
 use App\Models\Servicio;
+use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CompraController extends Controller
 {
@@ -17,37 +21,69 @@ class CompraController extends Controller
      */
     public function index()
     {
-        $datosCompra['compras']=Compra::paginate(5);
-        return view('crud.compra.index',$datosCompra);
+        $compras = Compra::with('comprobante')->where('estado',1)->latest()->get();
+        return view('crud.compra.index',compact('compras'));
     }
-  
+
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        $insumos = Insumo::all();
-        $servicios = Servicio::all();
+        $insumos = Insumo::where('estado', 1)->get();
+        $servicios = Servicio::where('estado', 1)->get();
         $comprobantes = Comprobante::all();
-        $categorias = Categoria::all();
-        return view('crud.compra.create',compact('insumos','servicios','comprobantes','categorias'));
-
+        return view('crud.compra.create', compact('insumos', 'servicios', 'comprobantes',));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreCompraRequest $request)
     {
-        //
+        // dd($request);
+        try {
+            DB::beginTransaction();
+
+
+            $compra = Compra::create($request->validated());
+            $arrayInsumo = $request->get('arrayidinsumo');
+            $arrayCantidad = $request->get('arraycantidad');
+
+            $siseArray = count($arrayInsumo);
+            $cont = 0;
+            while ($cont < $siseArray) {
+                $compra->insumos()->syncWithoutDetaching([
+                    $arrayInsumo[$cont] => [
+                        'cantidad' => $arrayCantidad[$cont]
+                    ]
+                ]);
+
+                $insumo = Insumo::find($arrayInsumo[$cont]);
+                $stockActual = $insumo->stock;
+                $stockNuevo = intval($arrayCantidad[$cont]);
+
+                DB::table('insumos')->where('id', $insumo->id)->update([
+                    'stock' => $stockActual + $stockNuevo
+                ]);
+
+                $cont++;
+            }
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+        }
+        return redirect('compra')->with('Mensaje', 'Compra');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Compra $compra)
     {
-        //
+        $insumo = Insumo::all();
+        return view('crud.compra.show',compact('compra','insumo'));
     }
 
     /**

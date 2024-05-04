@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreInsumoRequest extends FormRequest
 {
@@ -11,7 +12,7 @@ class StoreInsumoRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +23,17 @@ class StoreInsumoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'nombre' => 'required | max:60 | unique:categorias,nombre',
+            'descripcion' => 'nullable | max:1000',
+            'stock' => 'required | numeric | min:0',
+            'invima' => 'required',
+            'vencimiento' => 'required',
+            'lote' => 'required',
+            'riesgo' => 'required',
+            'vida_util' => 'required',
+            'id_categoria' => 'required',
+            'id_marca' => 'required',
+            'id_presentacion' => 'required',
         ];
     }
 }

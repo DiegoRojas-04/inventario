@@ -65,10 +65,23 @@ class PresentacionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
-    { 
-        Presentacione::destroy($id);
-        return redirect('presentacion')->with('Mensaje2','Presentacion');
-
+    public function destroy($id)
+    {
+      $presentacion = Presentacione::find($id);
+      if ($presentacion) {
+        if ($presentacion->estado == 1) {
+          $presentacion->update([
+            'estado' => 0
+          ]);
+          return redirect('presentacion')->with('Mensaje2', 'presentacion eliminada');
+        } else {
+          $presentacion->update([
+            'estado' => 1
+          ]);
+          return redirect('presentacion')->with('Mensaje3', 'presentacion restaurada');
+        }
+      } else {
+        return redirect('presentacion')->with('Mensaje', 'presentacion no encontrada');
+      }
     }
 }

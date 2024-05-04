@@ -3,23 +3,32 @@
 @section('title', 'Dashboard')
 
 @section('content_header')
-    @if(Session::has('Mensaje'))
-    <div id="alertaError" class="alert alert-danger absolute" role="alert">
-        {{ Session::get('Mensaje') }}        
-    </div>  
-    @endif
-    @if(Session::has('Mensaje2'))
-    <div id="alertaExito" class="alert alert-success" role="alert">
-        {{ Session::get('Mensaje2') }}        
-    </div>
+    @if (session('Mensaje'))
+        <script>
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "top-end",
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                }
+            });
+            Toast.fire({
+                icon: "success",
+                title: "Compra Exitosa"
+            });
+        </script>
     @endif
     <div class="form-row">
         <div class="col-sm-12 d-flex align-items-center justify-content-between">
-            <a href="{{ url('/compra/create')}}" class="text-decoration-none text-white">
+            <a href="{{ url('/compra/create') }}" class="text-decoration-none text-white">
                 <button type="submit" class="btn btn-primary">Agregar Compra</button>
             </a>
-            
-            <form action="{{'/compra'}}" method="GET" class="ml-auto">
+
+            <form action="{{ '/compra' }}" method="GET" class="ml-auto">
                 <div class="input-group">
                     <input type="text" class="form-control" name="texto" value="">
                     <div class="input-group-append">
@@ -32,49 +41,47 @@
 @stop
 
 @section('content')
-<div class="card">
-    <div class="card-header">
-        <h1 class="card-title">Vista principal de Compra</h1>
-    </div>
-    <div class="card-body">
+    <div class="card">
+        <div class="card-header">
+            <h1 class="card-title">Vista principal de Compra</h1>
+        </div>
+        <div class="card-body">
 
-        <table class="table">
-            <thead class="thead-dark">
-              <tr class="text-center">
-                <th scope="col">#</th>
-                <th scope="col">Nombre</th>
-                <th scope="col">Descripcion</th>
-                <th scope="col">Acciones</th>
-              </tr>
-            </thead>
-            <tbody class="text-center">
-                @foreach($compras as $compra)
-            <tr>
-                <td>{{$loop->iteration}}</td>
-                <td>{{$compra->nombre}}</td>
-                <td>{{$compra->descripcion}}</td>
+            <table class="table">
+                <thead class="thead-dark">
+                    <tr class="text-center">
+                        <th>Comprobante</th>
+                        <th>Numero Comprobante</th>
+                        <th>Fecha y Hora</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="text-center">
+                    @foreach ($compras as $item)
+                        <tr>
+                            <td>{{ $item->comprobante->tipo_comprobante }}</td>
+                            <td>{{ $item->numero_comprobante }}</td>
+                            <td>{{ $item->fecha_hora }}</td>
+                            <td>
 
-                <td>
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                        <form action="{{ url('/compra/'.$compra->id)}}" method="POST">
-                        {{csrf_field()}}
-                        {{method_field('DELETE')}}
-                        <button type="submit" class="btn btn-danger">Eliminar</button></form>
-                        </div>
-                        <div class="col-md-6">
-                        <a href="{{ url('/compra/'.$compra->id.'/edit')}}" class="text-decoration-none text-white">
-                        <button type="submit" class="btn btn-warning ">Editar</button></a>
-                        </div>
-                    </div>
-                </td>
-            </tr>
-              @endforeach
-            </tbody>
-        </table>   
-        {{$compras->links()}}
+                                <div class="btn-group" role="group">
+                                    <form action="{{ route('compra.show', ['compra' => $item]) }}" method="get">
+                                        <button type="submit" class="btn btn-success"><i class="fa fa-eye"
+                                                aria-hidden="true"></i></button>
+                                    </form>
+                                </div>
+
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-danger">Eliminar</button>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            {{-- {{ $compras->links() }} --}}
+        </div>
     </div>
-</div>
 @stop
 
 @section('css')
@@ -83,5 +90,7 @@
 @stop
 
 @section('js')
-    <script> console.log("Hi, I'm using the Laravel-AdminLTE package!"); </script>
+    <script>
+        console.log("Hi, I'm using the Laravel-AdminLTE package!");
+    </script>
 @stop

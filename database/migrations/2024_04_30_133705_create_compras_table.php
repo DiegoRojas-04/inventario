@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('numero_comprobante',255);
             $table->tinyInteger('estado')->default(1);
             $table->foreignId('comprobante_id')->nullable()->constrained('comprobantes')->onDelete('set null');
+            // $table->integer('total');
             $table->timestamps();
         });
     }

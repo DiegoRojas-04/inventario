@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Comprobante;
 use App\Models\Entrega;
 use App\Models\Insumo;
+use App\Models\Servicio;
 use Illuminate\Http\Request;
 
 class EntregaController extends Controller
@@ -23,8 +25,10 @@ class EntregaController extends Controller
      */
     public function create()
     {
-        $insumos = Insumo::all();
-        return view('crud.entrega.create',compact('insumos'));    
+        $insumos = Insumo::where('estado', 1)->get();
+        $servicios = Servicio::where('estado', 1)->get();
+        $comprobantes = Comprobante::all();
+        return view('crud.entrega.create', compact('insumos', 'servicios', 'comprobantes',));   
 
     }
 

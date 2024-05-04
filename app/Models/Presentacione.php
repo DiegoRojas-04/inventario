@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Presentacione extends Model
 {
     use HasFactory;
-
+    protected $fillable = ['nombre', 'estado'];
     public function insumos(){
         return $this->hasMany(Insumo::class,'id');
     }
