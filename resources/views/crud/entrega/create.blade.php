@@ -23,7 +23,7 @@
 
                             <div class="col-md-12 mb-2">
                                 <label class="form-label">Insumos:</label>
-                                <select data-size="5" title="Seleccionar Insumos..." data-live-search="true"
+                                <select data-size="10" title="Seleccionar Insumos..." data-live-search="true"
                                     name="nombre" id="nombre" data-style="btn-white"
                                     class="form-control selectpicker show-tick ">
                                     @foreach ($insumos as $item)
@@ -55,11 +55,13 @@
                                                 <th>#</th>
                                                 <th>Insumo</th>
                                                 <th>Cantidad</th>
+                                                <th></th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <tr>
                                                 <th></th>
+                                                <td></td>
                                                 <td></td>
                                                 <td></td>
                                             </tr>
@@ -131,6 +133,8 @@
                                 <input type="hidden" name="fecha_hora" value="{{ $fecha_hora }}">
                             </div>
 
+                            <input type="hidden" name="user_id" value="2">
+
                             <div class="col-md-12 mb-2 text-center">
                                 <button type="submit" class="btn btn-success">Guardar</button>
                             </div>
@@ -172,12 +176,96 @@
 @section('js')
 <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js"></script>
 
-<script>
+{{-- <script>
       $(document).ready(function() {
             $('#btn_agregar').click(function() {
                 agregarinsumo();
             });
         });
+</script> --}}
+<script>
+    $(document).ready(function() {
+        $('#btn_agregar').click(function() {
+            agregarinsumo();
+        });
+    });
+
+    let cont = 0;
+    let total = 0;
+
+    function agregarinsumo() {
+        let id_insumo = $('#nombre').val();
+        let nameinsumo = $('#nombre option:selected').text();
+        let cantidad = parseInt($('#stock').val());
+
+        if (id_insumo != '' && nameinsumo != '' && cantidad != '') {
+
+            if (cantidad > 0 && (cantidad % 1 == 0)) {
+
+                let fila = '<tr id="fila' + cont + '">' +
+                    '<th>' + (cont + 1) + '</th>' +
+                    '<td><input type="hidden" name="arrayidinsumo[]" value="' + id_insumo + '">' + nameinsumo + '</td>' +
+                    '<td><input type="hidden" name="arraycantidad[]" value="' + cantidad + '">' + cantidad + '</td>' +
+                    '<td><button class="btn btn-danger" type="button" onClick="eliminarInsumo(' + cont +
+                    ')"><i class="fa fa-trash"></i></button></td>' +
+                    '</tr>';
+
+                $('#tabla_detalle').append(fila);
+                limpiarCampo();
+                cont++;
+                total += cantidad;
+                $('#total').html(total);
+            } else {
+                showModal('Valores Incorrectos')
+            }
+
+
+        } else {
+            showModal('Campos Obligatorios')
+        }
+    }
+
+    function limpiarCampo() {
+        let select = $('#nombre');
+        select.selectpicker();
+        select.selectpicker('val', '');
+        $('#stock').val('');
+    }
+
+    function eliminarInsumo(indice) {
+        let cantidadEliminada = parseInt($('#fila' + indice).find('td:eq(1)').text());
+        total -= cantidadEliminada;
+        $('#fila' + indice).remove();
+        $('#total').html(total);
+    }
+
+
+    function recalcularTotal() {
+        total = 0;
+        $('#tabla_detalle tbody tr').each(function() {
+            let cantidad = parseInt($(this).find('td:eq(1)').text());
+            total += cantidad;
+        });
+        $('#total').html(total);
+    }
+
+    function showModal(message, icon = 'error') {
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        })
+        Toast.fire({
+            icon: icon,
+            title: message
+        })
+    }
 </script>
 
 @stop

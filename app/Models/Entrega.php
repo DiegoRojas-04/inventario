@@ -8,9 +8,19 @@ use Illuminate\Database\Eloquent\Model;
 class Entrega extends Model
 {
     use HasFactory;
+    
+    protected $fillable = [
+        'fecha_hora',
+        'numero_comprobante',
+        'estado',
+        'servicio_id',
+        'user_id',
+        'comprobante_id',
 
-    public function cliente(){
-        return $this->belongsTo(Servicio::class);
+    ];
+
+    public function servicio(){
+        return $this->belongsTo(Servicio::class,'servicio_id');
     }
 
     public function user(){

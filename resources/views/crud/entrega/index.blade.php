@@ -3,15 +3,24 @@
 @section('title', 'Dashboard')
 
 @section('content_header')
-    @if (Session::has('Mensaje'))
-        <div id="alertaError" class="alert alert-danger absolute" role="alert">
-            {{ Session::get('Mensaje') }}
-        </div>
-    @endif
-    @if (Session::has('Mensaje2'))
-        <div id="alertaExito" class="alert alert-success" role="alert">
-            {{ Session::get('Mensaje2') }}
-        </div>
+    @if (session('Mensaje'))
+        <script>
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "top-end",
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                }
+            });
+            Toast.fire({
+                icon: "success",
+                title: "Entrega Exitosa"
+            });
+        </script>
     @endif
     <div class="form-row">
         <div class="col-sm-12 d-flex align-items-center justify-content-between">
@@ -34,63 +43,53 @@
 @section('content')
     <div class="card">
         <div class="card-header">
-            <h1 class="card-title">Vista principal de Compra</h1>
+            <h1 class="card-title">Vista principal de Entregas</h1>
         </div>
         <div class="card-body">
 
             <table class="table">
                 <thead class="thead-dark">
                     <tr class="text-center">
-                        <th scope="col">Comprobante</th>
-                        <th scope="col">Fecha y Hora</th>
-                        <th scope="col">Total</th>
-                        <th scope="col">Acciones</th>
+                        <th>Entrega a</th>
+                        <th>Comprobante</th>
+                        <th>Numero Comprobante</th>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody class="text-center">
-                    @foreach ($compras as $item)
+                    @foreach ($entregas as $item)
                         <tr>
-                            <td>
-                                <p>{{ $item->comrpobante->tipo_comprobante }}</p>
-                                <p>{{ $item->comprobante->numero_comprobante }}</p>
-                            </td>
-                            <td>{{ $item->fecha_hora }}</td>
-                            <td>{{ $item->total }}</td>
+                            <td>{{ $item->servicio->nombre}}</td>
+                            <td>{{ $item->comprobante->tipo_comprobante }}</td>
+                            <td>{{ $item->numero_comprobante }}</td>
+                            <td>{{\Carbon\Carbon::parse($item->fecha_hora)->format('d-m-Y')}}</td>
+                            <td>{{\Carbon\Carbon::parse($item->fecha_hora)->format('H:i:s')}}</td>
                             <td>
                                 <div class="btn-group" role="group">
-                                    <button type="button" class="btn btn-success">Ver</button>
-                                    <button type="button" class="btn btn-danger">Eliminar</button>
+                                    <form action="{{ route('entrega.show', ['entrega' => $item]) }}" method="get">
+                                        <button type="submit" class="btn btn-success"><i class="fa fa-eye"
+                                                aria-hidden="true"></i></button>
+                                    </form>
                                 </div>
-                            </td>
 
-                            <td>
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <form action="{{ url('/entrega/' . $entrega->id) }}" method="POST">
-                                            {{ csrf_field() }}
-                                            {{ method_field('DELETE') }}
-                                            <button type="submit" class="btn btn-danger">Eliminar</button>
-                                        </form>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <a href="{{ url('/entrega/' . $entrega->id . '/edit') }}"
-                                            class="text-decoration-none text-white">
-                                            <button type="submit" class="btn btn-warning ">Editar</button></a>
-                                    </div>
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-danger">Eliminar</button>
                                 </div>
                             </td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
-            {{ $entregas->links() }}
+            {{-- {{ $compras->links() }} --}}
         </div>
     </div>
 @stop
 
 @section('css')
     {{-- Add here extra stylesheets --}}
-    {{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 @stop
 
 @section('js')

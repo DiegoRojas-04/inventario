@@ -22,7 +22,7 @@
 
                             <div class="col-md-12 mb-2">
                                 <label class="form-label">Insumos:</label>
-                                <select data-size="5" title="Seleccionar Insumos..." data-live-search="true"
+                                <select data-size="10" title="Seleccionar Insumos..." data-live-search="true"
                                     name="nombre" id="nombre" data-style="btn-white"
                                     class="form-control selectpicker show-tick ">
                                     @foreach ($insumos as $item)

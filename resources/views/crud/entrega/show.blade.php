@@ -5,8 +5,8 @@
 @section('content_header')
     <div class="form-row">
         <div class="col-sm-12 d-flex align-items-center justify-content-between">
-            <a href="{{ url('/compra') }}" class="text-decoration-none text-white">
-                <button type="submit" class="btn btn-primary">Ver Compras</button>
+            <a href="{{ url('/entrega') }}" class="text-decoration-none text-white">
+                <button type="submit" class="btn btn-primary">Ver Entregas</button>
             </a>
     </div>
 @stop
@@ -16,12 +16,36 @@
     <div class="row mb-2">
         <div class="col-sm-4">
             <div class="input-group mb-3">
-                <span class="input-group-text"><i class="fa fa-folder"></i></span>
+                <span class="input-group-text"><i class="fa fa-user-md"></i></span>
+                <input disabled type="text" class="form-control" value="Entrega realizada Por:">
+            </div>
+        </div>
+        <div class="col-sm-8">
+            <input disabled type="text" class="form-control" value="{{$entrega->user->name}}">
+        </div>
+    </div>
+
+    <div class="row mb-2">
+        <div class="col-sm-4">
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa fa-users"></i></span>
+                <input disabled type="text" class="form-control" value="Entrega realizada a:">
+            </div>
+        </div>
+        <div class="col-sm-8">
+            <input disabled type="text" class="form-control" value="{{$entrega->servicio->nombre}}">
+        </div>
+    </div>
+
+    <div class="row mb-2">
+        <div class="col-sm-4">
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa fa-file"></i></span>
                 <input disabled type="text" class="form-control" value="Tipo de Comprobante:">
             </div>
         </div>
         <div class="col-sm-8">
-            <input disabled type="text" class="form-control" value="{{$compra->comprobante->tipo_comprobante}}">
+            <input disabled type="text" class="form-control" value="{{$entrega->comprobante->tipo_comprobante}}">
         </div>
     </div>
     <div class="row mb-2">
@@ -32,7 +56,7 @@
             </div>
         </div>
         <div class="col-sm-8">
-            <input disabled type="text" class="form-control" value="{{$compra->numero_comprobante}}">
+            <input disabled type="text" class="form-control" value="{{$entrega->numero_comprobante}}">
         </div>
     </div>
     <div class="row mb-2">
@@ -43,10 +67,10 @@
             </div>
         </div>
         <div class="col-sm-4">
-            <input disabled type="text" class="form-control" value="{{\Carbon\Carbon::parse($compra->fecha_hora)->format('d-m-Y')}}">
+            <input disabled type="text" class="form-control" value="{{\Carbon\Carbon::parse($entrega->fecha_hora)->format('d-m-Y')}}">
         </div>
         <div class="col-sm-4">
-            <input disabled type="text" class="form-control" value="{{\Carbon\Carbon::parse($compra->fecha_hora)->format('H:i:s')}}">
+            <input disabled type="text" class="form-control" value="{{\Carbon\Carbon::parse($entrega->fecha_hora)->format('H:i:s')}}">
         </div>
     </div>
 
@@ -54,20 +78,24 @@
 
     <div class="card mb-4">
         <div class="card-header text-center">
-           <h5> Detalle de Compra</h5>
+           <h5> Detalle de Entrega</h5>
         </div>
         <div class="card-body table-responsive">
             <table class="table table-striped">
                 <thead class="bg-primary text-white">
-                    <tr>
+                    <tr class="text-center">
                         <th>Producto</th>
+                        <th>Marca</th>
+                        <th>Presentacion</th>
                         <th>Cantidad</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($compra->insumos as $item)
-                        <tr>
+                    @foreach($entrega->insumos as $item)
+                        <tr class="text-center">
                             <td>{{$item->nombre}}</td>
+                            <td>{{$item->marca->nombre}}</td>    
+                            <td>{{$item->presentacione->nombre}}</td>    
                             <td>{{$item->pivot->cantidad}}</td>
                         </tr>
                     @endforeach
@@ -75,7 +103,6 @@
             </table>
         </div>
     </div>
-
 
 
 </div>

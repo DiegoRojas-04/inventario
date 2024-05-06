@@ -16,7 +16,7 @@ class InsumoController extends Controller
      */
     public function index()
     {
-        $datosInsumo['insumos']=Insumo::paginate(5);
+        $datosInsumo['insumos']=Insumo::paginate(10);
         return view('crud.insumo.index',$datosInsumo);
     }
 
