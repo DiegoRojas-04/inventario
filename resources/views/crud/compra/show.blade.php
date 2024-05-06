@@ -68,6 +68,8 @@
                     @foreach($compra->insumos as $item)
                         <tr>
                             <td>{{$item->nombre}}</td>
+                            <td>{{$item->marca->nombre}}</td>    
+                            <td>{{$item->presentacione->nombre}}</td>
                             <td>{{$item->pivot->cantidad}}</td>
                         </tr>
                     @endforeach
@@ -75,9 +77,6 @@
             </table>
         </div>
     </div>
-
-
-
 </div>
 @stop
 

@@ -52,7 +52,8 @@
                     <tr class="text-center">
                         <th>Comprobante</th>
                         <th>Numero Comprobante</th>
-                        <th>Fecha y Hora</th>
+                        <th>Fecha</th>
+                        <th>Hora</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -61,7 +62,8 @@
                         <tr>
                             <td>{{ $item->comprobante->tipo_comprobante }}</td>
                             <td>{{ $item->numero_comprobante }}</td>
-                            <td>{{ $item->fecha_hora }}</td>
+                            <td>{{\Carbon\Carbon::parse($item->fecha_hora)->format('d-m-Y')}}</td>
+                            <td>{{\Carbon\Carbon::parse($item->fecha_hora)->format('H:i:s')}}</td>
                             <td>
 
                                 <div class="btn-group" role="group">
