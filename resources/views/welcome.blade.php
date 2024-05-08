@@ -170,3 +170,64 @@
         </div>
     </body>
 </html>
+
+<tbody class="text-center">
+    @foreach ($insumos as $insumo)
+        <tr>
+            {{-- <td>{{$loop->iteration}}</td> --}}
+            <td>{{ $insumo->nombre }}</td>
+            <td>{{ $insumo->marca->nombre }}</td>
+            <td>{{ $insumo->presentacione->nombre }}</td>
+            <td>{{ $insumo->caracteristicas()->exists() ? $insumo->caracteristicas->first()->invima ?? 'N/A' : 'N/A' }}</td>
+            <td>{{ $insumo->riesgo }}</td>
+            <td>{{ $insumo->stock }}</td>
+            <td>
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-success" data-bs-toggle="modal"
+                        data-bs-target="#modalInsumo-{{ $insumo->id }}"><i class="fa fa-eye"
+                            aria-hidden="true"></i>
+                    </button>
+                </div>
+                <div class="btn-group" role="group">
+                    <a href="{{ url('/insumo/' . $insumo->id . '/edit') }}"
+                        class="text-decoration-none text-white">
+                        <button type="submit" class="btn btn-warning "><i class="fa fa-file"
+                                aria-hidden="true"></i></button></a>
+                </div>
+                <div class="btn-group" role="group">
+                    <form action="{{ url('/insumo/' . $insumo->id) }}" method="POST">
+                        {{ csrf_field() }}
+                        {{ method_field('DELETE') }}
+                        <button type="submit" class="btn btn-danger"><i class="fa fa-trash"
+                                aria-hidden="true"></i></button>
+                    </form>
+                </div>
+            </td>
+        </tr>
+        <!-- Detalles adicionales (ocultos por defecto) -->
+        <tr id="detalles{{ $insumo->id }}" class="collapse">
+            <td colspan="7">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Invima</th>
+                            <th>Lote</th>
+                            <th>Fecha de Vencimiento</th>
+                            {{-- Agrega más columnas según sea necesario --}}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($insumo->caracteristicas as $caracteristica)
+                            <tr>
+                                <td>{{ $caracteristica->invima }}</td>
+                                <td>{{ $caracteristica->lote }}</td>
+                                <td>{{ $caracteristica->vencimiento }}</td>
+                                {{-- Agrega más columnas según sea necesario --}}
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    @endforeach
+</tbody>

@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Dashboard')
+@section('title', 'Entrega')
 
 @section('content_header')
     <div class="form-row">
@@ -75,7 +75,7 @@
     </div>
 
 
-
+    
     <div class="card mb-4">
         <div class="card-header text-center">
            <h5> Detalle de Entrega</h5>
@@ -83,16 +83,16 @@
         <div class="card-body table-responsive">
             <table class="table table-striped">
                 <thead class="bg-primary text-white">
-                    <tr class="text-center">
+                    <tr>
                         <th>Producto</th>
                         <th>Marca</th>
                         <th>Presentacion</th>
-                        <th>Cantidad</th>
+                        <th>Cantidad</th>   
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($entrega->insumos as $item)
-                        <tr class="text-center">
+                        <tr>
                             <td>{{$item->nombre}}</td>
                             <td>{{$item->marca->nombre}}</td>    
                             <td>{{$item->presentacione->nombre}}</td>    

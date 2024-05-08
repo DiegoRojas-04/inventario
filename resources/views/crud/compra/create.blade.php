@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Dashboard')
+@section('title', 'Compra')
 
 @section('content_header')
 
@@ -8,7 +8,7 @@
 
 @section('content')
 
-<form action="{{ url('/compra') }}"  method="post">
+    <form action="{{ url('/compra') }}" method="post">
         @csrf
 
         <div class="container mt-4">
@@ -22,14 +22,27 @@
 
                             <div class="col-md-12 mb-2">
                                 <label class="form-label">Insumos:</label>
-                                <select data-size="10" title="Seleccionar Insumos..." data-live-search="true"
-                                    name="nombre" id="nombre" data-style="btn-white"
-                                    class="form-control selectpicker show-tick ">
+                                <select data-size="10" title="Seleccionar Insumos..." data-live-search="true" name="nombre"
+                                    id="nombre" data-style="btn-white" class="form-control selectpicker show-tick ">
                                     @foreach ($insumos as $item)
-                                        <option value="{{ $item->id }}">{{ $item->nombre }}</option>
+                                        <option value="{{ $item->id }}" data-requiere-lote="{{ $item->requiere_lote }}">
+                                            {{ $item->nombre }}</option>
                                     @endforeach
                                 </select>
                             </div>
+                            <div class="col-md-6 mb-2" id="campos_lote_fecha" style="display: none;">
+                                <label for="lote">Lote:</label>
+                                <input type="text" id="lote" name="arraycaracteristicas[0][lote]" class="form-control">
+                            </div>
+                            <div class="col-md-6 mb-2" id="campos_vencimiento" style="display: none;">
+                                <label for="vencimiento">Fecha de Vencimiento:</label>
+                                <input type="date" id="vencimiento" name="arraycaracteristicas[0][vencimiento]" class="form-control">
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <label for="invima" class="form-label">Invima:</label>
+                                <input type="text" id="invima" name="arraycaracteristicas[0][invima]" class="form-control">
+                            </div>
+                            
                             <div class="col-md-6 mb-2">
                                 <label class="form-label">Cantidad:</label>
                                 <input type="number" name="stock" id="stock" class="form-control" placeholder="0">
@@ -46,8 +59,12 @@
                                             <tr>
                                                 <th>#</th>
                                                 <th>Insumo</th>
+                                                <th>Invima</th>
+                                                <th>Lote</th>
+                                                <th>Fecha</th>
                                                 <th>Cantidad</th>
-                                                <th></th>
+                                                <th><i class="fa fa-trash"></i></th>
+
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -56,6 +73,10 @@
                                                 <td></td>
                                                 <td></td>
                                                 <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+
                                             </tr>
                                         </tbody>
                                         <tfoot>
@@ -119,11 +140,11 @@
                                 <label>Fecha:</label>
                                 <input readonly type="date" name="fecha" id="fecha" class="form-control"
                                     value="<?php echo date('Y-m-d'); ?>">
-                                   <?php
-                                    use Carbon\Carbon;
-                                    $fecha_hora = Carbon::now()->toDateTimeString();
-                                    ?>
-                                <input type="hidden" name="fecha_hora" value="{{$fecha_hora}}">
+                                <?php
+                                use Carbon\Carbon;
+                                $fecha_hora = Carbon::now()->toDateTimeString();
+                                ?>
+                                <input type="hidden" name="fecha_hora" value="{{ $fecha_hora }}">
                             </div>
 
                             <div class="col-md-12 mb-2 text-center">
@@ -134,27 +155,6 @@
                 </div>
             </div>
         </div>
-
-
-        <!-- Modal cancelar Compra -->
-        {{-- <div class="modal fade" id="modalCancelar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        ¿Deseas Cancelar la compra?
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Confirmar</button>
-                    </div>
-                </div>
-            </div>
-        </div> --}}
-
     </form>
 @stop
 
@@ -166,6 +166,21 @@
     href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/css/bootstrap-select.min.css">
 @section('js')
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#nombre').change(function() {
+                let id_insumo = $(this).val();
+                let requiere_lote = $(this).find('option:selected').data('requiere-lote');
+                if (requiere_lote == 1) {
+                    $('#campos_lote_fecha').show();
+                    $('#campos_vencimiento').show();
+                } else {
+                    $('#campos_lote_fecha').hide();
+                    $('#campos_vencimiento').hide();
+                }
+            });
+        });
+    </script>
     <script>
         $(document).ready(function() {
             $('#btn_agregar').click(function() {
@@ -180,14 +195,22 @@
             let id_insumo = $('#nombre').val();
             let nameinsumo = $('#nombre option:selected').text();
             let cantidad = parseInt($('#stock').val());
+            let lote = $('#lote').val();
+            let vencimiento = $('#vencimiento').val();
+            let invima = $('#invima').val();
 
             if (id_insumo != '' && nameinsumo != '' && cantidad != '') {
-
                 if (cantidad > 0 && (cantidad % 1 == 0)) {
-
                     let fila = '<tr id="fila' + cont + '">' +
                         '<th>' + (cont + 1) + '</th>' +
-                        '<td><input type="hidden" name="arrayidinsumo[]" value="' + id_insumo + '">' + nameinsumo + '</td>' +
+                        '<td><input type="hidden" name="arrayidinsumo[]" value="' + id_insumo + '">' + nameinsumo +
+                        '</td>' +
+                        '<td><input type="hidden" name="arraycaracteristicas[' + cont + '][invima]" value="' + invima +
+                        '">' + invima + '</td>' +
+                        '<td><input type="hidden" name="arraycaracteristicas[' + cont + '][lote]" value="' + lote + '">' +
+                        lote + '</td>' +
+                        '<td><input type="hidden" name="arraycaracteristicas[' + cont + '][vencimiento]" value="' +
+                        vencimiento + '">' + vencimiento + '</td>' +
                         '<td><input type="hidden" name="arraycantidad[]" value="' + cantidad + '">' + cantidad + '</td>' +
                         '<td><button class="btn btn-danger" type="button" onClick="eliminarInsumo(' + cont +
                         ')"><i class="fa fa-trash"></i></button></td>' +
@@ -201,18 +224,20 @@
                 } else {
                     showModal('Valores Incorrectos')
                 }
-
-
             } else {
                 showModal('Campos Obligatorios')
             }
         }
+
 
         function limpiarCampo() {
             let select = $('#nombre');
             select.selectpicker();
             select.selectpicker('val', '');
             $('#stock').val('');
+            $('#lote').val('');
+            $('#vencimiento').val('');
+            $('#invima').val('');
         }
 
         function eliminarInsumo(indice) {

@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Dashboard')
+@section('title', 'Insumo')
 
 @section('content_header')
     @if (session('Mensaje'))
@@ -54,13 +54,19 @@
                 </div>
 
                 <div class="col-md-4">
+                    <label>¿Requiere Lote y Fecha de Vencimiento?</label>
+                    <input type="checkbox" name="requiere_lote" class="form-control" value="1">
+                </div>
+                
+{{-- 
+                <div class="col-md-4">
                     <label>Registro Sanitario / Invima:</label>
                     <input type="text" name="invima" class="form-control  @error('invima') is-invalid @enderror"
                         value="{{ old('invima') }}">
                     @error('invima')
                         <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
                     @enderror
-                </div>
+                </div> --}}
 
                 <div class="col-md-4">
                     <label>Categoria:</label>
@@ -106,7 +112,7 @@
                     @enderror
                 </div>
 
-                <div class="col-md-6">
+                {{-- <div class="col-md-6">
                     <label>Fecha de vencimiento:</label>
                     <input type="date" name="vencimiento"
                         class="form-control  @error('vencimiento') is-invalid @enderror" value="{{ old('vencimiento') }}">
@@ -122,7 +128,7 @@
                     @error('lote')
                         <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
                     @enderror
-                </div>
+                </div> --}}
 
                 <div class="col-md-4">
                     <label>Clasificacion de Riesgo:</label>

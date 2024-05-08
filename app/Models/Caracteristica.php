@@ -11,6 +11,10 @@ class Caracteristica extends Model
     protected $fillable = [
         'nombre',
         'descripcion',
+        'invima',
+        'lote',
+        'vencimiento',
+        'cantidad',
     ];
 
     public function categoria(){
@@ -25,5 +29,9 @@ class Caracteristica extends Model
         return $this->hasOne(Presentacione::class);
     }
 
+    public function insumos()
+    {
+        return $this->belongsToMany(Insumo::class)->withPivot('invima', 'lote', 'vencimiento', 'cantidad');
+    }
    
 }

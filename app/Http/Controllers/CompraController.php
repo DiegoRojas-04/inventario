@@ -41,51 +41,70 @@ class CompraController extends Controller
      */
     public function store(StoreCompraRequest $request)
     {
-        // dd($request);
         try {
             DB::beginTransaction();
-
-
+    
             $compra = Compra::create($request->validated());
             $arrayInsumo = $request->get('arrayidinsumo');
             $arrayCantidad = $request->get('arraycantidad');
-
-            $siseArray = count($arrayInsumo);
+            $arrayCaracteristicas = $request->get('arraycaracteristicas');
+    
+            $size = count($arrayInsumo);
             $cont = 0;
-            while ($cont < $siseArray) {
+            while ($cont < $size) {
                 $compra->insumos()->syncWithoutDetaching([
                     $arrayInsumo[$cont] => [
                         'cantidad' => $arrayCantidad[$cont]
                     ]
                 ]);
-
+    
                 $insumo = Insumo::find($arrayInsumo[$cont]);
                 $stockActual = $insumo->stock;
                 $stockNuevo = intval($arrayCantidad[$cont]);
-
+    
                 DB::table('insumos')->where('id', $insumo->id)->update([
                     'stock' => $stockActual + $stockNuevo
                 ]);
-
+    
+                $insumo->caracteristicas()->create([
+                    'invima' => $arrayCaracteristicas[$cont]['invima'],
+                    'lote' => $arrayCaracteristicas[$cont]['lote'],
+                    'vencimiento' => $arrayCaracteristicas[$cont]['vencimiento'],
+                    'cantidad' => $arrayCantidad[$cont],
+                ]);
+    
                 $cont++;
             }
-
+    
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
         }
+    
         return redirect('compra')->with('Mensaje', 'Compra');
     }
+    
 
     /**
      * Display the specified resource.
      */
-    public function show(Compra $compra)
+    public function show($id)
     {
-        $insumo = Insumo::all();
-        return view('crud.compra.show',compact('compra','insumo'));
+        $compra = Compra::findOrFail($id);
+        $insumos = $compra->insumos;
+    
+        // Inicializar un array para almacenar todas las características
+        $todasCaracteristicas = [];
+    
+        // Obtener todas las características de cada insumo y agregarlas al array
+        foreach ($insumos as $insumo) {
+            $caracteristicas = $insumo->caracteristicas;
+            $todasCaracteristicas = array_merge($todasCaracteristicas, $caracteristicas->toArray());
+        }
+    
+        return view('crud.compra.show', compact('compra', 'todasCaracteristicas', 'insumos'));
     }
-
+    
     /**
      * Show the form for editing the specified resource.
      */

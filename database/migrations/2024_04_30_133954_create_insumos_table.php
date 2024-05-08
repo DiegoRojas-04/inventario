@@ -16,9 +16,7 @@ return new class extends Migration
             $table->string('nombre', 80);
             $table->string('descripcion')->nullable();
             $table->integer('stock')->unsigned()->default(0);
-            $table->string('invima');
-            $table->date('vencimiento');
-            $table->string('lote');
+            $table->boolean('requiere_lote')->default(false);
             $table->string('riesgo');
             $table->string('vida_util');
             $table->tinyInteger('estado')->default(1);

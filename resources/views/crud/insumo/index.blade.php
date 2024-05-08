@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Dashboard')
+@section('title', 'Insumo')
 
 @section('content_header')
     @if (session('Mensaje'))
@@ -61,7 +61,7 @@
                         <th scope="col">Nombre</th>
                         <th scope="col">Marca</th>
                         <th scope="col">Presentacion</th>
-                        <th scope="col">Fecha Venci</th>
+                        <th scope="col">Vida Util</th>
                         <th scope="col">Clasif.Riesgo</th>
                         <th scope="col">Cantidad</th>
                         <th scope="col">Acciones</th>
@@ -74,69 +74,91 @@
                             <td>{{ $insumo->nombre }}</td>
                             <td>{{ $insumo->marca->nombre }}</td>
                             <td>{{ $insumo->presentacione->nombre }}</td>
-                            <td>{{ $insumo->vencimiento }}</td>
+                            <td>{{ $insumo->vida_util }}</td>
+                            {{-- <td>{{ $insumo->caracteristicas()->exists() ? $insumo->caracteristicas->first()->invima ?? 'N/A' : 'N/A' }}</td> --}}
                             <td>{{ $insumo->riesgo }}</td>
                             <td>{{ $insumo->stock }}</td>
                             <td>
                                 <div class="btn-group" role="group">
                                     <button type="button" class="btn btn-success" data-bs-toggle="modal"
-                                        data-bs-target="#modalInsumo-{{$insumo->id}}"><i class="fa fa-eye" aria-hidden="true"></i>
+                                        data-bs-target="#modalInsumo-{{ $insumo->id }}"><i class="fa fa-eye"
+                                            aria-hidden="true"></i>
                                     </button>
                                 </div>
                                 <div class="btn-group" role="group">
                                     <a href="{{ url('/insumo/' . $insumo->id . '/edit') }}"
                                         class="text-decoration-none text-white">
-                                        <button type="submit" class="btn btn-warning "><i class="fa fa-file" aria-hidden="true"></i></button></a>
+                                        <button type="submit" class="btn btn-warning "><i class="fa fa-file"
+                                                aria-hidden="true"></i></button></a>
                                 </div>
                                 <div class="btn-group" role="group">
                                     <form action="{{ url('/insumo/' . $insumo->id) }}" method="POST">
                                         {{ csrf_field() }}
                                         {{ method_field('DELETE') }}
-                                        <button type="submit" class="btn btn-danger"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                                        <button type="submit" class="btn btn-danger"><i class="fa fa-trash"
+                                                aria-hidden="true"></i></button>
                                     </form>
                                 </div>
                             </td>
-                            <!-- Modal -->
-                            <div class="modal fade" id="modalInsumo-{{$insumo->id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h4 class="modal-title text-center font-bold" id="exampleModalLabel">Detalle del Insumo</h4>
-                                        </div>
-                                        <div class="modal-body">
-                                            <label class="text-center font-bold"><h4>{{$insumo->nombre}}</h4></label>
-                                            <div class="mb-3 border-b pb-3">
-                                                <label class="block">Descripción:</label>
-                                                <span class="block">{{$insumo->descripcion}}</span>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="block">Invima:</label>
-                                                <span class="block">{{$insumo->invima}}</span>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="block">Lote:</label>
-                                                <span class="block">{{$insumo->lote}}</span>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="block">Vida Util:</label>
-                                                <span class="block">{{$insumo->vida_util}}</span>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer justify-center">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
                         </tr>
                     @endforeach
                 </tbody>
             </table>
             {{ $insumos->links() }}
         </div>
-
     </div>
+
+    @foreach ($insumos as $insumo)
+        <!-- Modal -->
+        <div class="modal fade bd-example-modal-lg" id="modalInsumo-{{ $insumo->id }}" tabindex="-1" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title font-bold" id="exampleModalLabel">Detalle del Insumo</h4>
+                    </div>
+                    <div class="modal-body  text-center">
+                        <label class="text-center font-bold">
+                            <h4>{{ $insumo->nombre }}</h4>
+                        </label>
+                        <div class="mb-3 border-b pb-3">
+                            <label class="block">Descripción:</label>
+                            <span class="block">{{ $insumo->descripcion }}</span>
+                        </div>
+                        <!-- Subtabla para mostrar características adicionales -->
+                        <div class="mb-3">
+                            <table class="table">
+                                <thead class="thead-dark">
+                                    <tr class="text-center">
+                                        <th>Invima</th>
+                                        <th>Lote</th>
+                                        <th>Fecha de Vencimiento</th>
+                                        <th>Cantidad</th>
+                                    </tr>
+                                </thead>
+                                <tbody  class="text-center">
+                                    @foreach ($insumo->caracteristicas as $caracteristica)
+                                    @if ($caracteristica->cantidad > 0)
+                                        <tr>
+                                            <td>{{ $caracteristica->invima }}</td>
+                                            <td>{{ $caracteristica->lote }}</td>
+                                            <td>{{ $caracteristica->vencimiento }}</td>
+                                            <td>{{ $caracteristica->cantidad }}</td>
+                                        </tr>
+                                    @endif
+                                @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-center">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endforeach
+
 @stop
 
 @section('css')
@@ -144,8 +166,7 @@
 @stop
 
 @section('js')
-    <script>
-    </script>
+    <script></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 @stop

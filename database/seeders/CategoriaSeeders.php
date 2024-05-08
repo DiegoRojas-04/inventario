@@ -2,21 +2,21 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
+use App\Models\Categoria;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class UserSeeder extends Seeder
+class CategoriaSeeders extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        User::insert([
-            ['name' => 'Rojas Rojas',
-            'email' => 'rojas@gmail.com',
-            'password' => bcrypt('password')]
+        Categoria::insert([
+            [ 'nombre' => 'Categoria1'],
+            [ 'nombre' => 'Categoria2'],
+            [ 'nombre' => 'Categoria3']
         ]);
     }
 }

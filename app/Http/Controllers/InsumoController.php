@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreInsumoRequest;
+use App\Models\Caracteristica;
 use App\Models\Categoria;
 use App\Models\Insumo;
 use App\Models\Marca;
@@ -24,12 +25,16 @@ class InsumoController extends Controller
      * Show the form for creating a new resource.
      */
     public function create()
-    {
-        $categorias = Categoria::where('estado', 1)->get();
-        $marcas = Marca::where('estado', 1)->get();
-        $presentaciones = Presentacione::where('estado', 1)->get();
-        return view('crud.insumo.create', compact('categorias','presentaciones','marcas'));
-    }
+{
+    $categorias = Categoria::where('estado', 1)->get();
+    $marcas = Marca::where('estado', 1)->get();
+    $presentaciones = Presentacione::where('estado', 1)->get();
+    
+    // Obtener todas las características disponibles de los insumos
+    $variantes = Caracteristica::all();
+
+    return view('crud.insumo.create', compact('categorias', 'presentaciones', 'marcas', 'variantes'));
+}
 
     /**
      * Store a newly created resource in storage.
@@ -59,7 +64,8 @@ class InsumoController extends Controller
         $categorias = Categoria::all();
         $marcas = Marca::all();
         $presentaciones = Presentacione::all();
-        return view('crud.insumo.edit', compact('insumo','categorias','marcas','presentaciones'));
+        $caracteristicas = $insumo->caracteristicas;
+        return view('crud.insumo.edit', compact('insumo','categorias','marcas','presentaciones','caracteristicas'));
     }
 
     /**

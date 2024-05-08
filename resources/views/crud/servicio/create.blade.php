@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Servicios')
+@section('title', 'Servicio')
 
 @section('content_header')
     @if (session('Mensaje'))

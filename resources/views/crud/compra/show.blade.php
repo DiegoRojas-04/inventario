@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Dashboard')
+@section('title', 'Compra')
 
 @section('content_header')
     <div class="form-row">
@@ -61,6 +61,8 @@
                 <thead class="bg-primary text-white">
                     <tr>
                         <th>Producto</th>
+                        <th>Marca</th>
+                        <th>Presentacion</th>
                         <th>Cantidad</th>
                     </tr>
                 </thead>
