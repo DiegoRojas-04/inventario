@@ -37,6 +37,7 @@
                                     <select data-size="10" title="Seleccionar Variante..." data-live-search="true"
                                         name="variante" id="variante" data-style="btn-white"
                                         class="form-control selectpicker show-tick ">
+
                                     </select>
                                 </div>
 
@@ -64,18 +65,19 @@
                                                     <th>#</th>
                                                     <th>Insumo</th>
                                                     <th>Cantidad</th>
-                                                    <th></th>
+                                                    <th>Codigo</th>
+                                                    <th><i class="fa fa-trash"></i></th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
-                                                <tr>
+                                            <tbody  class="text-center">                                                <tr>
                                                     <th></th>
+                                                    <td></td>
                                                     <td></td>
                                                     <td></td>
                                                     <td></td>
                                                 </tr>
                                             </tbody>
-                                            <tfoot>
+                                            <tfoot >
                                                 <tr>
                                                     <th></th>
                                                     <th>Total</th>
@@ -153,27 +155,6 @@
                     </div>
                 </div>
             </div>
-
-
-            <!-- Modal cancelar Compra -->
-            {{-- <div class="modal fade" id="modalCancelar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        ¿Deseas Cancelar la compra?
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Confirmar</button>
-                    </div>
-                </div>
-            </div>
-        </div> --}}
-
         </form>
     @stop
 
@@ -201,17 +182,25 @@
                             // Limpiar las opciones de selección existentes antes de agregar las nuevas
                             $('#variante').empty();
                             $.each(response.caracteristicas, function(key, value) {
-                                $('#variante').append('<option value="' + value.id + '">' +
-                                    value.invima + ' - ' + value.lote + ' - ' + value
-                                    .vencimiento + '</option>');
+                                // Verificar si la cantidad de la variante es mayor que 0
+                                if (value.cantidad > 0) {
+                                    $('#variante').append('<option value="' + value.id +
+                                        '">' +
+                                        value.invima + ' - ' + value.lote + ' - ' +
+                                        value
+                                        .vencimiento + '</option>');
+                                }
                             });
                             // Refrescar el plugin selectpicker después de actualizar las opciones
                             $('#variante').selectpicker('refresh');
                         }
                     });
+                    // Limpiar el select de variantes cuando se cambie la selección de insumos
+                    $('#variante').selectpicker('val', '');
                 });
             });
         </script>
+
 
         <script>
             $(document).ready(function() {
@@ -264,10 +253,10 @@
                 let selectVariante = $('#variante');
 
                 selectNombre.selectpicker('val', ''); // Limpiar select de nombre
-                selectVariante.empty(); // Limpiar select de variante
-                selectVariante.selectpicker('refresh'); // Refrescar el plugin selectpicker
+                selectVariante.selectpicker('val', ''); // Limpiar select de 
                 $('#stock').val(''); // Limpiar campo de cantidad
             }
+
 
 
             function eliminarInsumo(indice) {
