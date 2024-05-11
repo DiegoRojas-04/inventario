@@ -39,6 +39,7 @@ class EntregaController extends Controller
      */
     public function create()
     {
+        
         $insumos = Insumo::where('estado', 1)->get();
         $servicios = Servicio::where('estado', 1)->get();
         $comprobantes = Comprobante::all();

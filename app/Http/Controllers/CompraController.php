@@ -9,6 +9,7 @@ use App\Models\Comprobante;
 use App\Models\Insumo;
 use App\Models\InsumoCaracteristica;
 use App\Models\Presentacione;
+use App\Models\Proveedore;
 use App\Models\Servicio;
 use Carbon\Carbon;
 use Exception;
@@ -32,9 +33,9 @@ class CompraController extends Controller
     public function create()
     {
         $insumos = Insumo::where('estado', 1)->get();
-        $servicios = Servicio::where('estado', 1)->get();
+        $proveedores = Proveedore::where('estado', 1)->get();
         $comprobantes = Comprobante::all();
-        return view('crud.compra.create', compact('insumos', 'servicios', 'comprobantes',));
+        return view('crud.compra.create', compact('insumos', 'proveedores', 'comprobantes',));
     }
 
     /**

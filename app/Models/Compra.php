@@ -14,12 +14,21 @@ class Compra extends Model
         'fecha_hora',
         'numero_comprobante',
         'estado',
+        'proveedor_id',
+        'user_id',
         'comprobante_id',
 
     ];
+    public function proveedor()
+    {
+        return $this->belongsTo(Proveedore::class);
+    }
 
+    public function user(){
+        return $this->belongsTo(User::class);
+    }
 
-    public function comprobante(){
+    public function comprobante(){  
         return $this->belongsTo(Comprobante::class);
     }
 

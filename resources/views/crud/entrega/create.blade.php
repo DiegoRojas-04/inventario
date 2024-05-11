@@ -69,15 +69,15 @@
                                                     <th><i class="fa fa-trash"></i></th>
                                                 </tr>
                                             </thead>
-                                            <tbody  class="text-center">                                                <tr>
-                                                    <th></th>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
+                                            <tbody class="text-center">
+                                                <th></th>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
                                                 </tr>
                                             </tbody>
-                                            <tfoot >
+                                            <tfoot>
                                                 <tr>
                                                     <th></th>
                                                     <th>Total</th>
@@ -110,7 +110,7 @@
                                     <label for="" class="form-label">Entraga Para:</label>
                                     <select data-size="5" title="Entregar A:" data-live-search="true"
                                         data-style="btn-white" name="servicio_id" id="servicio_id"
-                                        class="form-control selectpicker show-tick">
+                                        class="form-control selectpicker show-tick" required>
                                         @foreach ($servicios as $item)
                                             <option value="{{ $item->id }}">{{ $item->nombre }}</option>
                                         @endforeach
@@ -121,7 +121,7 @@
                                     <label>Comprobante:</label>
                                     <select data-size="5" title="Seleccionar Comprobante..." data-live-search="true"
                                         data-style="btn-white" name="comprobante_id" id="comprobante_id"
-                                        class="form-control selectpicker show-tick">
+                                        class="form-control selectpicker show-tick" required>
                                         @foreach ($comprobantes as $item)
                                             <option value="{{ $item->id }}">{{ $item->tipo_comprobante }}</option>
                                         @endforeach
@@ -131,7 +131,7 @@
                                 <div class="col-md-12 mb-2">
                                     <label>Numero de Comprobante:</label>
                                     <input required type="text" name="numero_comprobante" id="numero_comprobante"
-                                        class="form-control">
+                                        class="form-control" required>
                                 </div>
 
                                 <div class="col-md-12 mb-2">
@@ -172,6 +172,9 @@
             $(document).ready(function() {
                 $('#nombre').change(function() {
                     let insumoId = $(this).val();
+                    console.log("Insumo seleccionado:", insumoId); // Verificar el valor de insumoId
+                    // Limpiar las opciones anteriores del select de variantes
+                    $('#variante').empty();
                     $.ajax({
                         url: "{{ url('/get-caracteristicas') }}",
                         type: "GET",
@@ -179,24 +182,28 @@
                             insumo_id: insumoId
                         },
                         success: function(response) {
-                            // Limpiar las opciones de selección existentes antes de agregar las nuevas
+                            // Limpiar las opciones anteriores del select de variantes
                             $('#variante').empty();
+                            // Agregar las nuevas opciones correspondientes al insumo seleccionado
                             $.each(response.caracteristicas, function(key, value) {
-                                // Verificar si la cantidad de la variante es mayor que 0
-                                if (value.cantidad > 0) {
+                                if (value.cantidad > 0 && value.insumo_id == insumoId) {
                                     $('#variante').append('<option value="' + value.id +
                                         '">' +
                                         value.invima + ' - ' + value.lote + ' - ' +
-                                        value
-                                        .vencimiento + '</option>');
+                                        value.vencimiento + '</option>');
                                 }
                             });
                             // Refrescar el plugin selectpicker después de actualizar las opciones
                             $('#variante').selectpicker('refresh');
                         }
+                    }).done(function() {
+                        // Limpiar el select de variantes cuando se cambie la selección de insumos
+                        $('#variante').selectpicker('val', '');
                     });
-                    // Limpiar el select de variantes cuando se cambie la selección de insumos
-                    $('#variante').selectpicker('val', '');
+                });
+
+                $('#btn_agregar').click(function() {
+                    agregarinsumo();
                 });
             });
         </script>
@@ -253,6 +260,7 @@
                 let selectVariante = $('#variante');
 
                 selectNombre.selectpicker('val', ''); // Limpiar select de nombre
+                selectVariante.selectpicker('val', ''); // Limpiar select de 
                 selectVariante.selectpicker('val', ''); // Limpiar select de 
                 $('#stock').val(''); // Limpiar campo de cantidad
             }

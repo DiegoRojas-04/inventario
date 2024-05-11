@@ -53,11 +53,15 @@
                     @enderror
                 </div>
 
-                <div class="col-md-4">
-                    <label>¿Requiere Lote y Fecha de Vencimiento?</label>
+                <div class="col-md-2 text-center">
+                    <label>Invima</label>
                     <input type="checkbox" name="requiere_lote" class="form-control" value="1">
                 </div>
-                
+
+                <div class="col-md-2 text-center">
+                    <label>Lote Y Fecha</label>
+                    <input type="checkbox" name="requiere_invima" class="form-control" value="1">
+                </div>
 {{-- 
                 <div class="col-md-4">
                     <label>Registro Sanitario / Invima:</label>

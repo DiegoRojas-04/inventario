@@ -50,6 +50,7 @@
             <table class="table">
                 <thead class="thead-dark">
                     <tr class="text-center">
+                        <th>Proveedor</th>
                         <th>Comprobante</th>
                         <th>Numero Comprobante</th>
                         <th>Fecha</th>
@@ -60,6 +61,7 @@
                 <tbody class="text-center">
                     @foreach ($compras as $item)
                         <tr>
+                            <td>{{ $item->proveedor->nombre }}</td>
                             <td>{{ $item->comprobante->tipo_comprobante }}</td>
                             <td>{{ $item->numero_comprobante }}</td>
                             <td>{{\Carbon\Carbon::parse($item->fecha_hora)->format('d-m-Y')}}</td>

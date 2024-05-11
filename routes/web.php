@@ -8,6 +8,7 @@ use App\Http\Controllers\EntregaController;
 use App\Http\Controllers\InsumoController;
 use App\Http\Controllers\MarcaController;
 use App\Http\Controllers\PresentacionController;
+use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\ServicioController;
 use Faker\Guesser\Name;
 use Illuminate\Support\Facades\Route;
@@ -25,5 +26,6 @@ Route::resource('compra', CompraController::class);
 Route::resource('marca', MarcaController::class);
 Route::resource('presentacion', PresentacionController::class);
 Route::resource('entrega', EntregaController::class);
+Route::resource('proveedor', ProveedorController::class);
 
 Route::get('/get-caracteristicas', [EntregaController::class, 'getCaracteristicas']);

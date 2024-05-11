@@ -322,6 +322,23 @@ return [
         ],
 
         [
+            'text' => 'Proveedores',
+            'url' => 'proveedor',
+            'icon' => 'far fa-user-circle',
+            'submenu' => [
+                [
+                    'text' => 'Servicio',
+                    'url' => 'proveedor',
+                ],
+                [
+                    'text' => 'Crear Proveedor',
+                    'url' => 'proveedor/create',
+                ],
+            ],
+
+        ],
+
+        [
             'text' => 'Servicios',
             'url' => 'servicio',
             'icon' => 'far fa fa-medkit',

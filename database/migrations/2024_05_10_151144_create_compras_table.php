@@ -16,8 +16,9 @@ return new class extends Migration
             $table->dateTime('fecha_hora');
             $table->string('numero_comprobante',255);
             $table->tinyInteger('estado')->default(1);
+            $table->foreignId('proveedor_id')->nullable()->constrained('proveedores')->onDelete('set null');
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
             $table->foreignId('comprobante_id')->nullable()->constrained('comprobantes')->onDelete('set null');
-            // $table->integer('total');
             $table->timestamps();
         });
     }

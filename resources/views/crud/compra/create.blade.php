@@ -25,24 +25,31 @@
                                 <select data-size="10" title="Seleccionar Insumos..." data-live-search="true" name="nombre"
                                     id="nombre" data-style="btn-white" class="form-control selectpicker show-tick ">
                                     @foreach ($insumos as $item)
-                                        <option value="{{ $item->id }}" data-requiere-lote="{{ $item->requiere_lote }}">
+                                        <option value="{{ $item->id }}" data-requiere-lote="{{ $item->requiere_lote }}"
+                                            data-requiere-invima="{{ $item->requiere_invima }}">
                                             {{ $item->nombre }}</option>
                                     @endforeach
                                 </select>
                             </div>
+
+                            <div class="col-md-6 mb-2" id="campos_invima" style="display: none;">
+                                <label for="invima" class="form-label">Invima:</label>
+                                <input type="text" id="invima" name="arraycaracteristicas[0][invima]"
+                                    class="form-control"> 
+                            </div>
+
                             <div class="col-md-6 mb-2" id="campos_lote_fecha" style="display: none;">
                                 <label for="lote">Lote:</label>
-                                <input type="text" id="lote" name="arraycaracteristicas[0][lote]" class="form-control">
+                                <input type="text" id="lote" name="arraycaracteristicas[0][lote]"
+                                    class="form-control">
                             </div>
                             <div class="col-md-6 mb-2" id="campos_vencimiento" style="display: none;">
                                 <label for="vencimiento">Fecha de Vencimiento:</label>
-                                <input type="date" id="vencimiento" name="arraycaracteristicas[0][vencimiento]" class="form-control">
+                                <input type="date" id="vencimiento" name="arraycaracteristicas[0][vencimiento]"
+                                    class="form-control">
                             </div>
-                            <div class="col-md-6 mb-2">
-                                <label for="invima" class="form-label">Invima:</label>
-                                <input type="text" id="invima" name="arraycaracteristicas[0][invima]" class="form-control">
-                            </div>
-                            
+
+
                             <div class="col-md-6 mb-2">
                                 <label class="form-label">Cantidad:</label>
                                 <input type="number" name="stock" id="stock" class="form-control" placeholder="0">
@@ -111,29 +118,39 @@
                             <div class="col-md-12 mb-2">
                                 <label for="" class="form-label">Proveedores:</label>
                                 <select data-size="5" title="Seleccionar Proveedor..." data-live-search="true"
-                                    data-style="btn-white" name="servicio_id" id="servicio_id"
-                                    class="form-control selectpicker show-tick">
-                                    @foreach ($servicios as $item)
+                                    data-style="btn-white" name="proveedor_id" id="proveedor_id"
+                                    class="form-control selectpicker show-tick" required>
+                                    @foreach ($proveedores as $item)
                                         <option value="{{ $item->id }}">{{ $item->nombre }}</option>
                                     @endforeach
                                 </select>
+                                @error ('proveedor_id')
+                                <small class="text-danger">{{'' .$message}}</small>
+                                @enderror
                             </div>
 
                             <div class="col-md-12 mb-2">
                                 <label>Comprobante:</label>
                                 <select data-size="5" title="Seleccionar Comprobante..." data-live-search="true"
                                     data-style="btn-white" name="comprobante_id" id="comprobante_id"
-                                    class="form-control selectpicker show-tick">
+                                    class="form-control selectpicker show-tick" required>
                                     @foreach ($comprobantes as $item)
                                         <option value="{{ $item->id }}">{{ $item->tipo_comprobante }}</option>
                                     @endforeach
                                 </select>
+                                @error ('comprobante_id')
+                                <strong class="text-danger">{{'' .$message}}</strong>
+                                @enderror
+                                 
                             </div>
 
                             <div class="col-md-12 mb-2">
                                 <label>Numero de Comprobante:</label>
                                 <input required type="text" name="numero_comprobante" id="numero_comprobante"
-                                    class="form-control">
+                                    class="form-control" required>
+                                    @error ('proveedor_id')
+                                    <small class="text-danger">{{'' .$message}}</small>
+                                    @enderror
                             </div>
 
                             <div class="col-md-12 mb-2">
@@ -168,18 +185,47 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js"></script>
     <script>
         $(document).ready(function() {
+            // Función para manejar el cambio en el select
             $('#nombre').change(function() {
+                // Obtener el valor del insumo seleccionado
                 let id_insumo = $(this).val();
+
+                // Obtener si requiere lote y mostrar u ocultar los campos
                 let requiere_lote = $(this).find('option:selected').data('requiere-lote');
                 if (requiere_lote == 1) {
-                    $('#campos_lote_fecha').show();
-                    $('#campos_vencimiento').show();
+                    mostrarCamposLote();
                 } else {
-                    $('#campos_lote_fecha').hide();
-                    $('#campos_vencimiento').hide();
+                    ocultarCamposLote();
+                }
+
+                // Obtener si requiere invima y mostrar u ocultar los campos
+                let requiere_invima = $(this).find('option:selected').data('requiere-invima');
+                if (requiere_invima == 1) {
+                    mostrarCamposInvima();
+                } else {
+                    ocultarCamposInvima();
                 }
             });
         });
+
+        // Funciones para mostrar y ocultar campos
+        function mostrarCamposLote() {
+            $('#campos_lote_fecha').show();
+            $('#campos_vencimiento').show();
+        }
+
+        function ocultarCamposLote() {
+            $('#campos_lote_fecha').hide();
+            $('#campos_vencimiento').hide();
+        }
+
+        function mostrarCamposInvima() {
+            $('#campos_invima').show();
+        }
+
+        function ocultarCamposInvima() {
+            $('#campos_invima').hide();
+        }
     </script>
     <script>
         $(document).ready(function() {
@@ -198,7 +244,7 @@
             let lote = $('#lote').val();
             let vencimiento = $('#vencimiento').val();
             let invima = $('#invima').val();
-
+            // && lote != ''  && vencimiento != ''  && invima != ''
             if (id_insumo != '' && nameinsumo != '' && cantidad != '') {
                 if (cantidad > 0 && (cantidad % 1 == 0)) {
                     let fila = '<tr id="fila' + cont + '">' +

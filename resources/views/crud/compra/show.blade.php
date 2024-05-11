@@ -16,6 +16,18 @@
     <div class="row mb-2">
         <div class="col-sm-4">
             <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa fa-users"></i></span>
+                <input disabled type="text" class="form-control" value="Proveedor:">
+            </div>
+        </div>
+        <div class="col-sm-8">
+            <input disabled type="text" class="form-control" value="{{ $compra->proveedor->nombre }}">
+        </div>
+    </div>
+   
+    <div class="row mb-2">
+        <div class="col-sm-4">
+            <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa fa-folder"></i></span>
                 <input disabled type="text" class="form-control" value="Tipo de Comprobante:">
             </div>

@@ -76,46 +76,33 @@
                         value="{{ \Carbon\Carbon::parse($entrega->fecha_hora)->format('H:i:s') }}">
                 </div>
             </div>
-
-
-
-                <div class="card mb-4">
-                    <div class="card-header text-center">
-                        <h5> Detalle de Entrega</h5>
-                    </div>
-                    <div class="card-body table-responsive">
-                        <table class="table table-striped">
-                            <thead class="bg-primary text-white text-center">
-                                <tr>
-                                    <th>Producto</th>
-                                    <th>Marca</th>
-                                    <th>Presentacion</th>
-                                    <th>INVIMA</th>
-                                    <th>Lote</th>
-                                    <th>Vencimiento</th>
-                                    <th>Cantidad</th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-center">
-                                @foreach ($detalleEntrega as $item)
-                                    @foreach ($item->caracteristicas as $caracteristica)
-                                        <tr>
-                                            <td>{{ $loop->first ? $item->nombre : '' }}</td>
-                                            <td>{{ $loop->first ? $item->marca->nombre : '' }}</td>
-                                            <td>{{ $loop->first ? $item->presentacione->nombre : '' }}</td>
-                                            <td>{{ $caracteristica->invima }}</td>
-                                            <td>{{ $caracteristica->lote }}</td>
-                                            <td>{{ $caracteristica->vencimiento }}</td>
-                                            <td>{{ $loop->last ? $item->pivot->cantidad : '' }}</td>
-                                        </tr>
-                                    @endforeach
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
+            <div class="card mb-4">
+                <div class="card-header text-center">
+                    <h5> Detalle de Entrega</h5>
                 </div>
-
-
+                <div class="card-body table-responsive">
+                    <table class="table table-striped">
+                        <thead class="bg-primary text-white">
+                            <tr>
+                                <th>Producto</th>
+                                <th>Marca</th>
+                                <th>Presentacion</th>
+                                <th>Cantidad</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($entrega->insumos as $item)
+                                <tr>
+                                    <td>{{ $item->nombre }}</td>
+                                    <td>{{ $item->marca->nombre }}</td>
+                                    <td>{{ $item->presentacione->nombre }}</td>
+                                    <td>{{ $item->pivot->cantidad }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     @stop
 
@@ -128,3 +115,33 @@
             console.log("Hi, I'm using the Laravel-AdminLTE package!");
         </script>
     @stop
+    {{-- 
+
+    <table class="table table-striped">
+        <thead class="bg-primary text-white text-center">
+            <tr>
+                <th>Producto</th>
+                <th>Marca</th>
+                <th>Presentacion</th>
+                <th>INVIMA</th>
+                <th>Lote</th>
+                <th>Vencimiento</th>
+                <th>Cantidad</th>
+            </tr>
+        </thead>
+        <tbody class="text-center">
+            @foreach ($detalleEntrega as $item)
+                @foreach ($item->caracteristicas as $caracteristica)
+                    <tr>
+                        <td>{{ $loop->first ? $item->nombre : '' }}</td>
+                        <td>{{ $loop->first ? $item->marca->nombre : '' }}</td>
+                        <td>{{ $loop->first ? $item->presentacione->nombre : '' }}</td>
+                        <td>{{ $caracteristica->invima }}</td>
+                        <td>{{ $caracteristica->lote }}</td>
+                        <td>{{ $caracteristica->vencimiento }}</td>
+                        <td>{{ $loop->last ? $item->pivot->cantidad : '' }}</td>
+                    </tr>
+                @endforeach
+            @endforeach
+        </tbody>
+    </table> --}}

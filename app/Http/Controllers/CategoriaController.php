@@ -30,7 +30,6 @@ class CategoriaController extends Controller
    * Store a newly created resource in storage.
    */
 
-
   public function store(StoreCategoriaRequest $request)
   {
     $datosCategoria = request()->except('_token');
