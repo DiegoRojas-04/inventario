@@ -58,7 +58,6 @@ class CategoriaController extends Controller
    */
   public function update(UpdateCategoriaRequest $request, string $id,)
   {
-
     $datosCategoria = request()->except(['_token', '_method']);
     Categoria::where('id', '=', $id)->update($datosCategoria);
     return redirect('categoria')->with('Mensaje2', 'Categoria');

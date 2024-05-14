@@ -42,51 +42,62 @@ class CompraController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(StoreCompraRequest $request)
-    {
-        try {
-            DB::beginTransaction();
-    
-            $compra = Compra::create($request->validated());
-    
-            // Verificar si la compra se creó correctamente
-            if ($compra) {
-                // Iterar sobre cada insumo comprado
-                foreach ($request->arrayidinsumo as $key => $idInsumo) {
-                    // Crear una nueva instancia de InsumoCaracteristica
-                    $caracteristica = new InsumoCaracteristica([
-                        'invima' => $request->arraycaracteristicas[$key]['invima'],
-                        'lote' => $request->arraycaracteristicas[$key]['lote'],
-                        'vencimiento' => $request->arraycaracteristicas[$key]['vencimiento'],
-                        'cantidad' => $request->arraycantidad[$key],
-                    ]);
-    
-                    // Asociar la compra directamente a la característica
-                    $compra->insumoCaracteristicas()->save($caracteristica);
-    
-                    // Obtener el insumo correspondiente
-                    $insumo = Insumo::find($idInsumo);
-    
-                    // Asociar la característica al insumo
-                    $insumo->caracteristicas()->save($caracteristica);
-                }
-    
-                DB::commit();
-                return redirect('compra')->with('Mensaje', 'Compra creada correctamente');
+{
+    try {
+        DB::beginTransaction();
+
+        $compra = Compra::create($request->validated());
+        $arrayInsumo = $request->get('arrayidinsumo');
+        $arrayCantidad = $request->get('arraycantidad');
+        $arrayCaracteristicas = $request->get('arraycaracteristicas');
+
+        $size = count($arrayInsumo);
+        $cont = 0;
+        while ($cont < $size) {
+            // Verificar si el insumo requiere características adicionales
+            $insumo = Insumo::find($arrayInsumo[$cont]);
+            if (!$insumo->requiere_lote && !$insumo->requiere_invima) {
+                // Si no requiere características adicionales, agregar solo el stock
+                $compra->insumos()->attach($arrayInsumo[$cont], ['cantidad' => $arrayCantidad[$cont]]);
+                
+                // Actualizar el stock del insumo
+                $stockActual = $insumo->stock;
+                $stockNuevo = intval($arrayCantidad[$cont]);
+                $insumo->update(['stock' => $stockActual + $stockNuevo]);
             } else {
-                DB::rollBack();
-                return redirect('compra')->with('Mensaje', 'Error al crear la compra');
+                // Si el insumo requiere características adicionales, agregar características
+                $compra->insumos()->syncWithoutDetaching([
+                    $arrayInsumo[$cont] => ['cantidad' => $arrayCantidad[$cont]]
+                ]);
+
+                // Actualizar el stock del insumo
+                $stockActual = $insumo->stock;
+                $stockNuevo = intval($arrayCantidad[$cont]);
+                $insumo->update(['stock' => $stockActual + $stockNuevo]);
+
+                // Crear las características del insumo
+                $insumo->caracteristicas()->create([
+                    'invima' => $arrayCaracteristicas[$cont]['invima'],
+                    'lote' => $arrayCaracteristicas[$cont]['lote'],
+                    'vencimiento' => $arrayCaracteristicas[$cont]['vencimiento'],
+                    'cantidad' => $arrayCantidad[$cont],
+                ]);
             }
-        } catch (Exception $e) {
-            DB::rollBack();
-            return redirect('compra')->with('Mensaje', 'Error en el servidor');
+
+            $cont++;
         }
+
+        DB::commit();
+    } catch (Exception $e) {
+        DB::rollBack();
     }
+
+    return redirect('compra')->with('Mensaje', 'Compra');
+}
 
     /**
      * Display the specified resource.
      */
-
-
 
    public function show($id)
 {
@@ -95,8 +106,6 @@ class CompraController extends Controller
 
     return view('crud.compra.show', compact('compra', 'insumosComprados'));
 }
-
-
 
     /**
      * Show the form for editing the specified resource.
