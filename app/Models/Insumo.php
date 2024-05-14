@@ -46,6 +46,7 @@ class Insumo extends Model
         return $this->belongsTo(Categoria::class, 'id_categoria');
     }
 
+  
     public function caracteristicas()
     {
         return $this->hasMany(InsumoCaracteristica::class);

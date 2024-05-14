@@ -17,33 +17,35 @@ class InsumoController extends Controller
      */
     public function index()
     {
-        $datosInsumo['insumos']=Insumo::paginate(10);
-        return view('crud.insumo.index',$datosInsumo);
-    }
+        $datosInsumo['insumos'] = Insumo::paginate(10);
+        $categorias = Categoria::all();
+        return view('crud.insumo.index', $datosInsumo)->with('categorias', $categorias); 
+       }
+    
 
     /**
      * Show the form for creating a new resource.
      */
     public function create()
-{
-    $categorias = Categoria::where('estado', 1)->get();
-    $marcas = Marca::where('estado', 1)->get();
-    $presentaciones = Presentacione::where('estado', 1)->get();
-    
-    // Obtener todas las características disponibles de los insumos
-    $variantes = Caracteristica::all();
+    {
+        $categorias = Categoria::where('estado', 1)->get();
+        $marcas = Marca::where('estado', 1)->get();
+        $presentaciones = Presentacione::where('estado', 1)->get();
 
-    return view('crud.insumo.create', compact('categorias', 'presentaciones', 'marcas', 'variantes'));
-}
+        // Obtener todas las características disponibles de los insumos
+        $variantes = Caracteristica::all();
+
+        return view('crud.insumo.create', compact('categorias', 'presentaciones', 'marcas', 'variantes'));
+    }
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(StoreInsumoRequest $request)
     {
-        $datosInsumo=request()->except('_token');       
+        $datosInsumo = request()->except('_token');
         Insumo::insert($datosInsumo);
-        return redirect('insumo/create')->with('Mensaje','Insumo');
+        return redirect('insumo/create')->with('Mensaje', 'Insumo');
     }
 
     /**
@@ -59,25 +61,37 @@ class InsumoController extends Controller
      * Show the form for editing the specified resource.
      */
     public function edit(string $id)
-    {    
-        $insumo=Insumo::findOrFail($id);
+    {
+        $insumo = Insumo::findOrFail($id);
         $categorias = Categoria::all();
         $marcas = Marca::all();
         $presentaciones = Presentacione::all();
         $caracteristicas = $insumo->caracteristicas;
-        return view('crud.insumo.edit', compact('insumo','categorias','marcas','presentaciones','caracteristicas'));
+        return view('crud.insumo.edit', compact('insumo', 'categorias', 'marcas', 'presentaciones', 'caracteristicas'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-        $datosInsumo=request()->except(['_token','_method']);
-        Insumo::where('id','=',$id)->update($datosInsumo);
-  
-        return redirect('insumo')->with('Mensaje2','Insumo Actualizada Correctamente');
+        $insumo = Insumo::findOrFail($id);
+
+        $insumo->nombre = $request->input('nombre');
+        $insumo->descripcion = $request->input('descripcion');
+        $insumo->requiere_invima = $request->has('requiere_invima') ? 1 : 0;
+        $insumo->requiere_lote = $request->has('requiere_lote') ? 1 : 0;
+        $insumo->id_categoria = $request->input('id_categoria');
+        $insumo->id_marca = $request->input('id_marca');
+        $insumo->id_presentacion = $request->input('id_presentacion');
+        $insumo->riesgo = $request->input('riesgo');
+        $insumo->vida_util = $request->input('vida_util');
+        $insumo->stock = $request->input('stock');
+
+        $insumo->save();
+        return redirect('insumo')->with('Mensaje2', 'Insumo Actualizada Correctamente');
     }
+
 
     /**
      * Remove the specified resource from storage.
@@ -85,6 +99,8 @@ class InsumoController extends Controller
     public function destroy(string $id)
     {
         Insumo::destroy($id);
-        return redirect('insumo')->with('Mensaje','insumo');
+        return redirect('insumo')->with('Mensaje', 'insumo');
     }
+
+    
 }

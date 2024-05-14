@@ -15,7 +15,7 @@ class CategoriaController extends Controller
    */
   public function index()
   {
-    $datosCategoria['categorias'] = Categoria::paginate(5);
+    $datosCategoria['categorias'] = Categoria::paginate(10);
     return view('crud.categoria.index', $datosCategoria);
   }
   /**

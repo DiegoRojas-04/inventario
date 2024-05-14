@@ -50,11 +50,48 @@
 @section('content')
     <div class="card">
         <div class="card-header">
-            <h1 class="card-title">Vista principal de los Insumos</h1>
+            <div class="row g-3">
+
+                <div class="col-md-1">
+                    <select class="form-control " id="pageSize">
+                        <option value="5">5</option>
+                        <option value="10" selected>10</option>
+                        <option value="20">20</option>
+                        <option value="50">50</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <select data-size="5" title="Seleccionar Categoria" data-live-search="true" name="id_categoria"
+                        id="id_categoria" class="form-control selectpicker show-tick">
+                        @foreach ($categorias as $categoria)
+                            <option value="{{ $categoria->id }}">{{ $categoria->nombre }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                
+                <div class="col-md-3">
+                    <select data-size="5" title="Seleccionar Categoria" data-live-search="true" name="id_categoria"
+                        id="id_categoria" class="form-control selectpicker show-tick">
+                        @foreach ($categorias as $categoria)
+                            <option value="{{ $categoria->id }}">{{ $categoria->nombre }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                
+                <div class="col-md-5 input-group">
+                    <input type="text" class="form-control" placeholder="Buscar" id="search">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                    </div>
+                </div>
+
+            </div>
         </div>
         <div class="card-body">
 
-            <table class="table">
+            <table class="table" id="datos">
                 <thead class="thead-dark">
                     <tr class="text-center">
                         {{-- <th scope="col">#</th> --}}
@@ -110,8 +147,8 @@
 
     @foreach ($insumos as $insumo)
         <!-- Modal -->
-        <div class="modal fade bd-example-modal-lg" id="modalInsumo-{{ $insumo->id }}" tabindex="-1" aria-labelledby="exampleModalLabel"
-            aria-hidden="true">
+        <div class="modal fade bd-example-modal-lg" id="modalInsumo-{{ $insumo->id }}" tabindex="-1"
+            aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -134,19 +171,28 @@
                                         <th>Lote</th>
                                         <th>Fecha de Vencimiento</th>
                                         <th>Cantidad</th>
+                                        <th>Accion</th>
                                     </tr>
                                 </thead>
-                                <tbody  class="text-center">
+                                <tbody class="text-center">
                                     @foreach ($insumo->caracteristicas as $caracteristica)
-                                    @if ($caracteristica->cantidad > 0)
-                                        <tr>
-                                            <td>{{ $caracteristica->invima }}</td>
-                                            <td>{{ $caracteristica->lote }}</td>
-                                            <td>{{ $caracteristica->vencimiento }}</td>
-                                            <td>{{ $caracteristica->cantidad }}</td>
-                                        </tr>
-                                    @endif
-                                @endforeach
+                                        @if ($caracteristica->cantidad > 0)
+                                            <tr>
+                                                <td>{{ $caracteristica->invima }}</td>
+                                                <td>{{ $caracteristica->lote }}</td>
+                                                <td>{{\Carbon\Carbon::parse($caracteristica->vencimiento)->format('d-m-Y')}}</td>
+                                                <td>{{ $caracteristica->cantidad }}</td>
+                                                <td>
+                                                    <div class="btn-group" role="group">
+                                                        <a href="{{ url('/insumo/' . $insumo->id . '/caracteristica/' . $caracteristica->id . '/edit') }}"
+                                                            class="text-decoration-none text-white">
+                                                            <button type="submit" class="btn btn-warning "><i
+                                                                    class="fa fa-file" aria-hidden="true"></i></button></a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endif
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>
@@ -169,4 +215,29 @@
     <script></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function() {
+
+            $("#search").keyup(function() {
+
+                _this = this;
+
+
+
+                $.each($("#datos tbody tr"), function() {
+
+                    if ($(this).text().toLowerCase().indexOf($(_this).val().toLowerCase()) === -1)
+
+                        $(this).hide();
+
+                    else
+
+                        $(this).show();
+
+                });
+
+            });
+
+        });
+    </script>
 @stop

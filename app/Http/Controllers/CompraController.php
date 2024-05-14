@@ -45,47 +45,42 @@ class CompraController extends Controller
     {
         try {
             DB::beginTransaction();
-
+    
             $compra = Compra::create($request->validated());
-            $arrayInsumo = $request->get('arrayidinsumo');
-            $arrayCantidad = $request->get('arraycantidad');
-            $arrayCaracteristicas = $request->get('arraycaracteristicas');
-
-            $size = count($arrayInsumo);
-            $cont = 0;
-            while ($cont < $size) {
-                $compra->insumos()->syncWithoutDetaching([
-                    $arrayInsumo[$cont] => [
-                        'cantidad' => $arrayCantidad[$cont]
-                    ]
-                ]);
-
-                $insumo = Insumo::find($arrayInsumo[$cont]);
-                $stockActual = $insumo->stock;
-                $stockNuevo = intval($arrayCantidad[$cont]);
-
-                DB::table('insumos')->where('id', $insumo->id)->update([
-                    'stock' => $stockActual + $stockNuevo
-                ]);
-
-                $insumo->caracteristicas()->create([
-                    'invima' => $arrayCaracteristicas[$cont]['invima'],
-                    'lote' => $arrayCaracteristicas[$cont]['lote'],
-                    'vencimiento' => $arrayCaracteristicas[$cont]['vencimiento'],
-                    'cantidad' => $arrayCantidad[$cont],
-                ]);
-
-                $cont++;
+    
+            // Verificar si la compra se creó correctamente
+            if ($compra) {
+                // Iterar sobre cada insumo comprado
+                foreach ($request->arrayidinsumo as $key => $idInsumo) {
+                    // Crear una nueva instancia de InsumoCaracteristica
+                    $caracteristica = new InsumoCaracteristica([
+                        'invima' => $request->arraycaracteristicas[$key]['invima'],
+                        'lote' => $request->arraycaracteristicas[$key]['lote'],
+                        'vencimiento' => $request->arraycaracteristicas[$key]['vencimiento'],
+                        'cantidad' => $request->arraycantidad[$key],
+                    ]);
+    
+                    // Asociar la compra directamente a la característica
+                    $compra->insumoCaracteristicas()->save($caracteristica);
+    
+                    // Obtener el insumo correspondiente
+                    $insumo = Insumo::find($idInsumo);
+    
+                    // Asociar la característica al insumo
+                    $insumo->caracteristicas()->save($caracteristica);
+                }
+    
+                DB::commit();
+                return redirect('compra')->with('Mensaje', 'Compra creada correctamente');
+            } else {
+                DB::rollBack();
+                return redirect('compra')->with('Mensaje', 'Error al crear la compra');
             }
-
-            DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
+            return redirect('compra')->with('Mensaje', 'Error en el servidor');
         }
-
-        return redirect('compra')->with('Mensaje', 'Compra');
     }
-
 
     /**
      * Display the specified resource.
@@ -93,24 +88,14 @@ class CompraController extends Controller
 
 
 
-    public function show($id)
-    {
-        $compra = Compra::findOrFail($id);
+   public function show($id)
+{
+    $compra = Compra::findOrFail($id);
+    $insumosComprados = $compra->insumos;
 
-        // Obtener los insumos asociados a la compra actual
-        $insumosComprados = $compra->insumos;
+    return view('crud.compra.show', compact('compra', 'insumosComprados'));
+}
 
-        // Inicializar un array para almacenar las características de los insumos de la compra
-        $caracteristicasCompradas = [];
-
-        // Iterar sobre los insumos comprados y obtener sus características asociadas
-        foreach ($insumosComprados as $insumo) {
-            $caracteristicas = InsumoCaracteristica::where('insumo_id', $insumo->id)->get();
-            $caracteristicasCompradas[$insumo->id] = $caracteristicas;
-        }
-
-        return view('crud.compra.show', compact('compra', 'caracteristicasCompradas'));
-    }
 
 
     /**

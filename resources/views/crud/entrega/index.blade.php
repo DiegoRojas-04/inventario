@@ -27,15 +27,6 @@
             <a href="{{ url('/entrega/create') }}" class="text-decoration-none text-white">
                 <button type="submit" class="btn btn-primary">Agregar Entrega</button>
             </a>
-
-            <form action="{{ '/entrega' }}" method="GET" class="ml-auto">
-                <div class="input-group">
-                    <input type="text" class="form-control" name="texto" value="">
-                    <div class="input-group-append">
-                        <button class="btn btn-primary" type="submit">Buscar</button>
-                    </div>
-                </div>
-            </form>
         </div>
     </div>
 @stop
@@ -43,7 +34,7 @@
 @section('content')
     <div class="card">
         <div class="card-header">
-            <h1 class="card-title">Vista principal de Entregas</h1>
+            
         </div>
         <div class="card-body">
 

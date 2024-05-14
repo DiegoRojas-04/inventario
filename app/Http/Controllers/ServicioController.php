@@ -12,7 +12,7 @@ class ServicioController extends Controller
      */
     public function index()
     {
-        $datosServicio['servicios']=Servicio::paginate(5);
+        $datosServicio['servicios']=Servicio::paginate(10);
         return view('crud.servicio.index',$datosServicio);    
     }
 

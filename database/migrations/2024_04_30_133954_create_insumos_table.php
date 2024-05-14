@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('insumos', function (Blueprint $table) {
             $table->id();
             $table->string('nombre', 80);
-            $table->string('descripcion')->nullable();
+            $table->string('descripcion', 255)->nullable();
             $table->integer('stock')->unsigned()->default(0);
             $table->boolean('requiere_lote')->default(false);
             $table->boolean('requiere_invima')->default(false);

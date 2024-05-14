@@ -24,7 +24,7 @@ class StoreInsumoRequest extends FormRequest
     {
         return [
             'nombre' => 'required | max:60 | unique:categorias,nombre',
-            'descripcion' => 'nullable | max:1000',
+            'descripcion' => 'nullable | max:255',
             'stock' => 'required | numeric | min:0',
             'riesgo' => 'required',
             'vida_util' => 'required',

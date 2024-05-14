@@ -47,16 +47,6 @@
             <a href="{{ url('/marca/create')}}" class="text-decoration-none text-white">
                 <button type="submit" class="btn btn-primary">Agregar Marca</button>
             </a>
-
-
-            <form action="{{'/marca'}}" method="GET" class="ml-auto">
-                <div class="input-group">
-                    <input type="text" class="form-control" name="texto" value="">
-                    <div class="input-group-append">
-                        <button class="btn btn-primary" type="submit">Buscar</button>
-                    </div>
-                </div>
-            </form>
         </div>
     </div>
 @stop
@@ -64,9 +54,33 @@
 @section('content')
 <div class="card">
     <div class="card-header">
-         <h1 class="card-title">
-            Marcas
-        </h1>
+        <div class="row g-3">
+
+            <div class="col-md-1">
+                <select class="form-control " id="pageSize">
+                    <option value="5">5</option>
+                    <option value="10" selected>10</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                </select>
+            </div>
+
+
+            <div class="col-md-6">
+
+            </div>
+
+
+
+
+            <div class="col-md-5 input-group">
+                <input type="text" class="form-control" placeholder="Buscar" id="search">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-search"></i></span>
+                </div>
+            </div>
+
+        </div>
     </div>
     <div class="card-body">
 

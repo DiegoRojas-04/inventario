@@ -25,12 +25,17 @@
                 <label>Descripcion:</label>
                 <input type="text" name="descripcion" class="form-control" value="{{$insumo->descripcion}}">
             </div>
-            
-            <div class="col-md-4">
-                <label>Registro Sanitario / Invima:</label>
-                <input type="text" name="invima" class="form-control" value="{{$insumo->invima}}">
-            </div>
   
+            <div class="col-md-2 text-center">
+                <label>Invima</label>
+                <input type="checkbox" name="requiere_lote" class="form-control" value="1" {{$insumo->requiere_lote ? 'checked' : ''}}>
+            </div>
+            
+            <div class="col-md-2 text-center">
+                <label>Lote Y Fecha</label> 
+                <input type="checkbox" name="requiere_invima" class="form-control" value="1" {{$insumo->requiere_invima ? 'checked' : ''}}>
+            </div>
+            
             <div class="col-md-4">
                 <label>Categoria:</label>
                 <select data-live-search="true" name="id_categoria" id="id_categoria" class="form-control selectpicker show-tick">
@@ -57,18 +62,7 @@
                     @endforeach
                 </select>
             </div>
-              
-            <div class="col-md-6">
-                <label>Fecha de vencimiento:</label>
-                <input type="text" name="vencimiento" class="form-control" value="{{$insumo->vencimiento}}">
-            </div>
-  
-            <div class="col-md-6">
-                  <label>Lote:</label>
-                  <input type="text" name="lote" class="form-control" value="{{$insumo->lote}}">
-            </div>
-
-                
+                              
             <div class="col-md-4">
                 <label>Clasificacion de Riesgo:</label>
                 <input type="text" name="riesgo" class="form-control" value="{{$insumo->riesgo}}">

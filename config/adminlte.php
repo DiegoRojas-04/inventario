@@ -327,7 +327,7 @@ return [
             'icon' => 'far fa-user-circle',
             'submenu' => [
                 [
-                    'text' => 'Servicio',
+                    'text' => 'Proveedor',
                     'url' => 'proveedor',
                 ],
                 [
@@ -464,7 +464,7 @@ return [
         ['header' => 'account_settings'],
         [
             'text' => 'profile',
-            'url' => 'profile',
+            'url' => 'perfil',
             'icon' => 'fas fa-fw fa-user',
             
         ],

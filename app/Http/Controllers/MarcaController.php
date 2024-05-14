@@ -14,7 +14,7 @@ class MarcaController extends Controller
      */
     public function index()
     {
-      $datosMarca['marcas']=Marca::paginate(7);
+      $datosMarca['marcas']=Marca::paginate(10);
       return view('crud.marca.index',$datosMarca);    
     }
 

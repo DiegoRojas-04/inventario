@@ -12,7 +12,7 @@ class PresentacionController extends Controller
      */
     public function index()
     {
-        $datosPresentacion['presentaciones']=Presentacione::paginate(5);
+        $datosPresentacion['presentaciones']=Presentacione::paginate(10);
         return view('crud.presentacion.index',$datosPresentacion);    }
 
     /**

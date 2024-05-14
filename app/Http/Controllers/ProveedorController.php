@@ -13,7 +13,7 @@ class ProveedorController extends Controller
      */
     public function index()
     {
-        $datosProveedor['proveedores']=Proveedore::paginate(5);
+        $datosProveedor['proveedores']=Proveedore::paginate(10);
         return view('crud.proveedor.index',$datosProveedor);    
     }
 
