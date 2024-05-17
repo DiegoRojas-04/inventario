@@ -15,13 +15,37 @@ class InsumoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $datosInsumo['insumos'] = Insumo::paginate(10);
-        $categorias = Categoria::all();
-        return view('crud.insumo.index', $datosInsumo)->with('categorias', $categorias); 
-       }
+    // public function index(Request $request)
+    // {
+    //     $pageSize = $request->input('page_size',10);
+    //     $datosInsumo['insumos'] = Insumo::paginate($pageSize);
+    //     $categorias = Categoria::all();
+    //     return view('crud.insumo.index', $datosInsumo)->with('categorias', $categorias); 
+    // }
     
+
+
+    
+   public function index(Request $request)
+{
+    $query = Insumo::query();
+    $categorias = Categoria::all();
+
+    // Filtrar por categoría si se proporciona
+    if ($request->has('id_categoria') && !empty($request->id_categoria)) {
+        $query->where('id_categoria', $request->id_categoria);
+    }
+
+    // Filtrar y ordenar por estado (primero estado 1, luego estado 0)
+    $insumos = $query->orderBy('estado', 'desc')->paginate($request->input('page_size', 10));
+
+    return view('crud.insumo.index', compact('insumos', 'categorias'));
+}
+
+
+  
+  
+  
 
     /**
      * Show the form for creating a new resource.
@@ -75,18 +99,33 @@ class InsumoController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'nombre' => 'required|max:60|unique:insumos,nombre,' . $id,
+            'descripcion' => 'nullable|max:255',
+        ]);
         $insumo = Insumo::findOrFail($id);
-
-        $insumo->nombre = $request->input('nombre');
-        $insumo->descripcion = $request->input('descripcion');
-        $insumo->requiere_invima = $request->has('requiere_invima') ? 1 : 0;
-        $insumo->requiere_lote = $request->has('requiere_lote') ? 1 : 0;
-        $insumo->id_categoria = $request->input('id_categoria');
-        $insumo->id_marca = $request->input('id_marca');
-        $insumo->id_presentacion = $request->input('id_presentacion');
-        $insumo->riesgo = $request->input('riesgo');
-        $insumo->vida_util = $request->input('vida_util');
-        $insumo->stock = $request->input('stock');
+        $insumo->fill([
+            'nombre' => $request->input('nombre'),
+            'descripcion' => $request->input('descripcion'),
+            'requiere_invima' => $request->filled('requiere_invima')  ? 1 : 0,
+            'requiere_lote' => $request->filled('requiere_lote') ? 1 : 0,
+            'id_categoria' => $request->input('id_categoria'),
+            'id_marca' => $request->input('id_marca'),
+            'id_presentacion' => $request->input('id_presentacion'),
+            'riesgo' => $request->input('riesgo'),
+            'vida_util' => $request->input('vida_util'),
+            // 'stock' => $request->input('stock'),
+        ]);
+        // $insumo->nombre = $request->input('nombre');
+        // $insumo->descripcion = $request->input('descripcion');
+        // $insumo->requiere_invima = $request->has('requiere_invima') ? 1 : 0;
+        // $insumo->requiere_lote = $request->has('requiere_lote') ? 1 : 0;
+        // $insumo->id_categoria = $request->input('id_categoria');
+        // $insumo->id_marca = $request->input('id_marca');
+        // $insumo->id_presentacion = $request->input('id_presentacion');
+        // $insumo->riesgo = $request->input('riesgo');
+        // $insumo->vida_util = $request->input('vida_util');
+        // $insumo->stock = $request->input('stock');
 
         $insumo->save();
         return redirect('insumo')->with('Mensaje2', 'Insumo Actualizada Correctamente');
@@ -96,11 +135,23 @@ class InsumoController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
-    {
-        Insumo::destroy($id);
-        return redirect('insumo')->with('Mensaje', 'insumo');
+    public function destroy($id)
+  {
+    $insumo = Insumo::find($id);
+    if ($insumo) {
+      if ($insumo->estado == 1) {
+        $insumo->update([
+          'estado' => 0
+        ]);
+        return redirect('insumo')->with('Mensaje', 'insumo eliminada');
+      } else {
+        $insumo->update([
+          'estado' => 1
+        ]);
+        return redirect('insumo')->with('Mensaje3', 'insumo restaurada');
+      }
+    } else {
+      return redirect('insumo')->with('Mensaje', 'insumo no encontrada');
     }
-
-    
+  }
 }

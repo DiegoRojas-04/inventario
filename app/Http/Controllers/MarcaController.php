@@ -12,10 +12,14 @@ class MarcaController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-      $datosMarca['marcas']=Marca::paginate(10);
-      return view('crud.marca.index',$datosMarca);    
+        $query = Marca::query();
+    
+        // Filtrar y ordenar por estado (primero estado 1, luego estado 0)
+        $marcas = $query->orderBy('estado', 'desc')->paginate($request->input('page_size', 10));
+    
+        return view('crud.marca.index', compact('marcas'));
     }
 
     /**
@@ -60,9 +64,14 @@ class MarcaController extends Controller
        * Update the specified resource in storage.
        */
       public function update(Request $request, $id)
-      {
+  {
+      $request->validate([
+          'nombre' => 'required|max:60|unique:marcas,nombre,' . $id,
+          'descripcion' => 'nullable|max:255',
+      ]);
+      
         $datosMarca=request()->except(['_token','_method']);
-        Marca::where('id','=',$id)->update($datosMarca);
+        Marca::where('id',$id)->update($datosMarca);
         return redirect('marca')->with('Mensaje2','Marca');
   
       }

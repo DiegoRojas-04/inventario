@@ -22,7 +22,7 @@
 
                             <div class="col-md-12 mb-2">
                                 <label class="form-label">Insumos:</label>
-                                <select data-size="10" title="Seleccionar Insumos..." data-live-search="true" name="nombre"
+                                <select data-size="8" title="Seleccionar Insumos..." data-live-search="true" name="nombre"
                                     id="nombre" data-style="btn-white" class="form-control selectpicker show-tick ">
                                     @foreach ($insumos as $item)
                                         <option value="{{ $item->id }}" data-requiere-lote="{{ $item->requiere_lote }}"
@@ -35,7 +35,7 @@
                             <div class="col-md-6 mb-2" id="campos_invima" style="display: none;">
                                 <label for="invima" class="form-label">Invima:</label>
                                 <input type="text" id="invima" name="arraycaracteristicas[0][invima]"
-                                    class="form-control"> 
+                                    class="form-control">
                             </div>
 
                             <div class="col-md-6 mb-2" id="campos_lote_fecha" style="display: none;">
@@ -124,8 +124,8 @@
                                         <option value="{{ $item->id }}">{{ $item->nombre }}</option>
                                     @endforeach
                                 </select>
-                                @error ('proveedor_id')
-                                <small class="text-danger">{{'' .$message}}</small>
+                                @error('proveedor_id')
+                                    <small class="text-danger">{{ '' . $message }}</small>
                                 @enderror
                             </div>
 
@@ -138,19 +138,19 @@
                                         <option value="{{ $item->id }}">{{ $item->tipo_comprobante }}</option>
                                     @endforeach
                                 </select>
-                                @error ('comprobante_id')
-                                <strong class="text-danger">{{'' .$message}}</strong>
+                                @error('comprobante_id')
+                                    <strong class="text-danger">{{ '' . $message }}</strong>
                                 @enderror
-                                 
+
                             </div>
 
                             <div class="col-md-12 mb-2">
                                 <label>Numero de Comprobante:</label>
                                 <input required type="text" name="numero_comprobante" id="numero_comprobante"
                                     class="form-control" required>
-                                    @error ('proveedor_id')
-                                    <small class="text-danger">{{'' .$message}}</small>
-                                    @enderror
+                                @error('proveedor_id')
+                                    <small class="text-danger">{{ '' . $message }}</small>
+                                @enderror
                             </div>
 
                             <div class="col-md-12 mb-2">
@@ -244,6 +244,7 @@
             let lote = $('#lote').val();
             let vencimiento = $('#vencimiento').val();
             let invima = $('#invima').val();
+            
             // && lote != ''  && vencimiento != ''  && invima != ''
             if (id_insumo != '' && nameinsumo != '' && cantidad != '') {
                 if (cantidad > 0 && (cantidad % 1 == 0)) {
@@ -292,7 +293,6 @@
             $('#fila' + indice).remove();
             $('#total').html(total);
         }
-
 
         function recalcularTotal() {
             total = 0;

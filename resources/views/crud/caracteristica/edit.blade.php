@@ -3,7 +3,7 @@
 @section('title', 'Insumo')
 
 @section('content_header')
-    <h1>Dashboard</h1>
+    <h1></h1>
 @stop
 
 @section('content')
@@ -12,33 +12,31 @@
             <h1 class="card-title">Vista principal Para Agregar un insumo</h1>
         </div>
         <div class="card-body">
-                <form action="{{ url('/insumo/' . $insumo->id . '/caracteristica/' . $caracteristica->id . '/edit') }}" method="POST" class="row g-3">
-                    @csrf
-                    @method('PATCH')
-                <div class="col-md-6">
-                    <label>Nombre:</label>
-                    <input type="text" name="nombre" class="form-control" value="{{ $insumo->nombre }}">
+            <form action="{{ route('caracteristica.update', ['insumoId' => $insumo->id, 'caracteristicaId' => $caracteristica->id]) }}" method="POST" class="row g-2">
+                @csrf
+                @method('PATCH')
+                <div class="form-group col-md-6">
+                    <label for="cantidad">Cantidad:</label>
+                    <input type="text" id="cantidad" name="cantidad"
+                        value="{{ $caracteristica->cantidad }}" class="form-control  @error('cantidad') is-invalid @enderror">
+                        @error('cantidad')
+                            <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
+                        @enderror
                 </div>
 
                 <div class="form-group col-md-6">
-                    <label for="cantidad">Cantidad:</label>
-                    <input type="text" class="form-control" id="cantidad" name="cantidad"
-                        value="{{ $caracteristica->cantidad }}">
-                </div>
-
-                <div class="form-group col-md-4">
                     <label for="invima">Invima:</label>
                     <input type="text" class="form-control" id="invima" name="invima"
                         value="{{ $caracteristica->invima }}">
                 </div>
 
-                <div class="form-group col-md-4">
+                <div class="form-group col-md-6">
                     <label for="lote">Lote:</label>
                     <input type="text" class="form-control" id="lote" name="lote"
                         value="{{ $caracteristica->lote }}">
                 </div>
 
-                <div class="form-group col-md-4">
+                <div class="form-group col-md-6">
                     <label for="vencimiento">Fecha de Vencimiento:</label>
                     <input type="date" class="form-control" id="vencimiento" name="vencimiento"
                         value="{{ $caracteristica->vencimiento }}">

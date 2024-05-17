@@ -46,21 +46,35 @@ class InsumoCaracteristicaController extends Controller
     public function edit($insumoId, $caracteristicaId)
     {
         $insumo = Insumo::findOrFail($insumoId);
-        $caracteristica = InsumoCaracteristica::findOrFail($caracteristicaId);
+        $caracteristica = $insumo->caracteristicas()->findOrFail($caracteristicaId);
+
         return view('crud.caracteristica.edit', compact('insumo', 'caracteristica'));
     }
-    
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, $insumoId, $caracteristicaId)
-    {
-        $caracteristica = InsumoCaracteristica::findOrFail($caracteristicaId);
-        $caracteristica->update($request->all());
-    
-        return redirect('insumo')->with('Mensaje2','Insumo Actualizada Correctamente');
-    }
+
+
+   
+public function update(Request $request, $insumoId, $caracteristicaId)
+{
+
+    $request->validate([
+        'cantidad' => 'required|integer|min:1 ',
+    ]);
+
+    $caracteristica = InsumoCaracteristica::findOrFail($caracteristicaId);
+    $insumo = Insumo::findOrFail($insumoId);
+
+    $cantidadAnterior = $caracteristica->cantidad;
+
+    $caracteristica->update($request->all());
+
+    $diferenciaCantidad = $caracteristica->cantidad - $cantidadAnterior;
+
+    $insumo->stock += $diferenciaCantidad;
+    $insumo->save();
+
+    return redirect('insumo')->with('Mensaje2', 'Insumo Actualizado Correctamente');
+}
 
     /**
      * Remove the specified resource from storage.

@@ -17,10 +17,16 @@
             {{method_field('PATCH')}}
 
             <label>Nombre de Marca:</label>
-                <input type="text" name="nombre" value="{{$marca->nombre}}" class="form-control">
+                <input type="text" name="nombre" value="{{$marca->nombre}}" class="form-control @error('nombre') is-invalid @enderror">
+                @error('nombre')
+                <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
+            @enderror
             <br>
             <label>Descripcion de Marca:</label>            
-                <input type="text" name="descripcion" value="{{$marca->descripcion}}" class="form-control">
+                <input type="text" name="descripcion" value="{{$marca->descripcion}}" class="form-control @error('descripcion') is-invalid @enderror">
+                @error('descripcion')
+                <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
+            @enderror
             <br>
             <button type="submit" class="btn bg-blue">{{'Actualizar'}}</button>        
         </form>

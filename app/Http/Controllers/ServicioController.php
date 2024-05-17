@@ -10,10 +10,12 @@ class ServicioController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $datosServicio['servicios']=Servicio::paginate(10);
-        return view('crud.servicio.index',$datosServicio);    
+        $query = Servicio::query();
+
+        $servicios = $query->orderBy('estado', 'desc')->paginate($request->input('page_size', 10));
+        return view('crud.servicio.index', compact('servicios'));
     }
 
     /**
@@ -56,19 +58,37 @@ class ServicioController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
+        $request->validate([
+            'nombre' => 'required|max:60|unique:servicios,nombre,' . $id,
+            'descripcion' => 'nullable|max:255',
+        ]); 
         $datosServicio=request()->except(['_token','_method']);
-        Servicio::where('id','=',$id)->update($datosServicio);
+        Servicio::where('id',$id)->update($datosServicio);
         return redirect('servicio')->with('Mensaje2','Servicio');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        Servicio::destroy($id);
-         return redirect('servicio')->with('Mensaje','Servicio');
+        $servicio = Servicio::find($id);
+        if ($servicio) {
+            if ($servicio->estado == 1) {
+
+                $servicio->estado = 0;
+                $servicio->save();
+                return redirect('servicio')->with('Mensaje', 'servicio eliminado');
+            } else {
+                // Cambiar el estado a activo
+                $servicio->estado = 1;
+                $servicio->save();
+                return redirect('servicio')->with('Mensaje3', 'servicio restaurado');
+            }
+        } else {
+            return redirect('servicio')->with('Mensaje', 'servicio no encontrado');
+        }
     }
 }

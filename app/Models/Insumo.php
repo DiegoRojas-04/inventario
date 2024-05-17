@@ -14,11 +14,13 @@ class Insumo extends Model
         'descripcion',
         'stock',
         'requiere_lote',
+        'requiere_invima',
         'riesgo',
         'vida_util',
         'id_categoria',
         'id_marca',
         'id_presentacion',
+        'estado'
     ];
 
     public function compras()
@@ -45,10 +47,10 @@ class Insumo extends Model
     {
         return $this->belongsTo(Categoria::class, 'id_categoria');
     }
-
-  
+     
     public function caracteristicas()
     {
-        return $this->hasMany(InsumoCaracteristica::class);
+        return $this->hasMany(InsumoCaracteristica::class, 'insumo_id');
     }
+  
 }

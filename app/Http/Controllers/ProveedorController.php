@@ -11,18 +11,23 @@ class ProveedorController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $datosProveedor['proveedores']=Proveedore::paginate(10);
-        return view('crud.proveedor.index',$datosProveedor);    
+        $query = Proveedore::query();
+    
+        // Filtrar y ordenar por estado (primero estado 1, luego estado 0)
+        $proveedores = $query->orderBy('estado', 'desc')->paginate($request->input('page_size', 10));
+    
+        return view('crud.proveedor.index', compact('proveedores'));
     }
+    
 
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-          return view('crud.proveedor.create'); 
+        return view('crud.proveedor.create');
     }
 
     /**
@@ -30,9 +35,9 @@ class ProveedorController extends Controller
      */
     public function store(StoreProveedorRequest $request)
     {
-        $datosProveedor=request()->except('_token');
+        $datosProveedor = request()->except('_token');
         Proveedore::insert($datosProveedor);
-        return redirect('proveedor/create')->with('Mensaje','Proveedor Agregado Correctamente');
+        return redirect('proveedor/create')->with('Mensaje', 'Proveedor Agregado Correctamente');
     }
 
     /**
@@ -48,26 +53,45 @@ class ProveedorController extends Controller
      */
     public function edit(string $id)
     {
-        $proveedor=Proveedore::findOrFail($id);
-        return view('crud.proveedor.edit',compact('proveedor'));
+        $proveedor = Proveedore::findOrFail($id);
+        return view('crud.proveedor.edit', compact('proveedor'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-        $datosProveedor=request()->except(['_token','_method']);
-        Proveedore::where('id','=',$id)->update($datosProveedor);
-        return redirect('proveedor')->with('Mensaje2','Proveedor');
+        $request->validate([
+            'nombre' => 'required|max:60|unique:proveedores,nombre,' . $id,
+            'descripcion' => 'nullable|max:255',
+        ]);
+        $datosProveedor = request()->except(['_token', '_method']);
+        Proveedore::where('id', $id)->update($datosProveedor);
+        return redirect('proveedor')->with('Mensaje2', 'Proveedor');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        Proveedore::destroy($id);
-        return redirect('proveedor')->with('Mensaje','Proveedor');
+        $proveedor = Proveedore::find($id);
+        if ($proveedor) {
+            // Verificar si el proveedor está activo o eliminado
+            if ($proveedor->estado == 1) {
+                // Cambiar el estado a eliminado
+                $proveedor->estado = 0;
+                $proveedor->save();
+                return redirect('proveedor')->with('Mensaje', 'Proveedor eliminado');
+            } else {
+                // Cambiar el estado a activo
+                $proveedor->estado = 1;
+                $proveedor->save();
+                return redirect('proveedor')->with('Mensaje3', 'Proveedor restaurado');
+            }
+        } else {
+            return redirect('proveedor')->with('Mensaje', 'Proveedor no encontrado');
+        }
     }
 }

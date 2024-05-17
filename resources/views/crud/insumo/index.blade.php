@@ -3,98 +3,61 @@
 @section('title', 'Insumo')
 
 @section('content_header')
-    @if (session('Mensaje'))
-        <script>
-            const Toast = Swal.mixin({
-                toast: true,
-                position: "top-end",
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                    toast.onmouseenter = Swal.stopTimer;
-                    toast.onmouseleave = Swal.resumeTimer;
-                }
-            });
-            Toast.fire({
-                icon: "error",
-                title: "Insumo Eliminado"
-            });
-        </script>
-    @endif
-
-    @if (session('Mensaje2'))
-        <script>
-            const Toast = Swal.mixin({
-                toast: true,
-                position: "top-end",
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                    toast.onmouseenter = Swal.stopTimer;
-                    toast.onmouseleave = Swal.resumeTimer;
-                }
-            });
-            Toast.fire({
-                icon: "success",
-                title: "Insumo Actualizado"
-            });
-        </script>
-    @endif
     <a href="{{ url('/insumo/create') }}" class="text-decoration-none text-white">
-        <button type="submit" class="btn btn-primary ">Agregar Insumos</button></a>
+        <button type="submit" class="btn btn-primary">Agregar Insumos</button>
+    </a>
     <br>
 @stop
 
 @section('content')
     <div class="card">
         <div class="card-header">
-            <div class="row g-3">
+            <form id="filterForm" method="GET" action="{{ url('/insumo') }}">
+                {{-- @csrf  --}}
+                <div class="row g-3">
+                    <div class="col-md-1">
+                        <select class="form-control" id="pageSize" name="page_size">
+                            <option value="10">#</option>
+                            <option value="5" {{ request('page_size') == 5 ? 'selected' : '' }}>5</option>
+                            <option value="10" {{ request('page_size') == 10 ? 'selected' : '' }}>10</option>
+                            <option value="20" {{ request('page_size') == 20 ? 'selected' : '' }}>20</option>
+                            <option value="30" {{ request('page_size') == 30 ? 'selected' : '' }}>30</option>
+                            <option value="50" {{ request('page_size') == 50 ? 'selected' : '' }}>50</option>
+                        </select>
+                    </div>
 
-                <div class="col-md-1">
-                    <select class="form-control " id="pageSize">
-                        <option value="5">5</option>
-                        <option value="10" selected>10</option>
-                        <option value="20">20</option>
-                        <option value="50">50</option>
-                    </select>
-                </div>
+                    <div class="col-md-3">
+                        <select data-size="5" title="Seleccionar Categoria" data-live-search="true" name="id_categoria"
+                            id="id_categoria" class="form-control selectpicker show-tick">
+                            <option value="">Seleccionar Categoría</option>
+                            @foreach ($categorias as $categoria)
+                                <option value="{{ $categoria->id }}"
+                                    {{ request('id_categoria') == $categoria->id ? 'selected' : '' }}>
+                                    {{ $categoria->nombre }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
 
-                <div class="col-md-3">
-                    <select data-size="5" title="Seleccionar Categoria" data-live-search="true" name="id_categoria"
-                        id="id_categoria" class="form-control selectpicker show-tick">
-                        @foreach ($categorias as $categoria)
-                            <option value="{{ $categoria->id }}">{{ $categoria->nombre }}</option>
-                        @endforeach
-                    </select>
-                </div>
+                    <div class="col-md-3">
+                    </div>
 
-                
-                <div class="col-md-3">
-                    <select data-size="5" title="Seleccionar Categoria" data-live-search="true" name="id_categoria"
-                        id="id_categoria" class="form-control selectpicker show-tick">
-                        @foreach ($categorias as $categoria)
-                            <option value="{{ $categoria->id }}">{{ $categoria->nombre }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                
-                <div class="col-md-5 input-group">
-                    <input type="text" class="form-control" placeholder="Buscar" id="search">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                    <div class="col-md-5 input-group">
+                        <input type="text" class="form-control" placeholder="Buscar" id="search" name="search"
+                            value="{{ request('search') }}">
+                        <div class="input-group-prepend">
+                            <button type="submit" class="btn" aria-disabled="true"
+                                style="pointer-events: none;"><i class="fas fa-search"></i></button>
+                        </div>
                     </div>
                 </div>
-
-            </div>
+                <input type="hidden" name="page_size" id="pageSizeHidden">
+            </form>
         </div>
         <div class="card-body">
-
             <table class="table" id="datos">
                 <thead class="thead-dark">
                     <tr class="text-center">
-                        {{-- <th scope="col">#</th> --}}
                         <th scope="col">Nombre</th>
                         <th scope="col">Marca</th>
                         <th scope="col">Presentacion</th>
@@ -107,17 +70,15 @@
                 <tbody class="text-center">
                     @foreach ($insumos as $insumo)
                         <tr>
-                            {{-- <td>{{$loop->iteration}}</td> --}}
                             <td>{{ $insumo->nombre }}</td>
                             <td>{{ $insumo->marca->nombre }}</td>
                             <td>{{ $insumo->presentacione->nombre }}</td>
                             <td>{{ $insumo->vida_util }}</td>
-                            {{-- <td>{{ $insumo->caracteristicas()->exists() ? $insumo->caracteristicas->first()->invima ?? 'N/A' : 'N/A' }}</td> --}}
                             <td>{{ $insumo->riesgo }}</td>
                             <td>{{ $insumo->stock }}</td>
                             <td>
                                 <div class="btn-group" role="group">
-                                    <button type="button" class="btn btn-success" data-bs-toggle="modal"
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                                         data-bs-target="#modalInsumo-{{ $insumo->id }}"><i class="fa fa-eye"
                                             aria-hidden="true"></i>
                                     </button>
@@ -125,28 +86,43 @@
                                 <div class="btn-group" role="group">
                                     <a href="{{ url('/insumo/' . $insumo->id . '/edit') }}"
                                         class="text-decoration-none text-white">
-                                        <button type="submit" class="btn btn-warning "><i class="fa fa-file"
+                                        <button type="submit" class="btn btn-warning"><i class="fa fa-file"
                                                 aria-hidden="true"></i></button></a>
                                 </div>
+
                                 <div class="btn-group" role="group">
-                                    <form action="{{ url('/insumo/' . $insumo->id) }}" method="POST">
-                                        {{ csrf_field() }}
-                                        {{ method_field('DELETE') }}
-                                        <button type="submit" class="btn btn-danger"><i class="fa fa-trash"
-                                                aria-hidden="true"></i></button>
-                                    </form>
+                                    @if ($insumo->estado == 1)
+                                        <form id="delete-form-{{ $insumo->id }}"
+                                            action="{{ url('/insumo/' . $insumo->id) }}" method="POST">
+                                            {{ csrf_field() }}
+                                            {{ method_field('DELETE') }}
+                                            <button type="button" class="btn btn-danger"
+                                                onclick="confirmDelete({{ $insumo->id }})">
+                                                <i class="fa fa-trash" aria-hidden="true"></i>
+                                            </button>
+                                        </form>
+                                    @else
+                                        <form id="delete-form-{{ $insumo->id }}"
+                                            action="{{ url('/insumo/' . $insumo->id) }}" method="POST">
+                                            {{ csrf_field() }}
+                                            {{ method_field('DELETE') }}
+                                            <button type="button" class="btn btn-success"
+                                                onclick="confirmDelete({{ $insumo->id }})">
+                                                <i class="fa fa-share" aria-hidden="true"></i>
+                                            </button>
+                                        </form>
+                                    @endif
                                 </div>
                             </td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
-            {{ $insumos->links() }}
+            {{ $insumos->appends(request()->query())->links() }}
         </div>
     </div>
 
     @foreach ($insumos as $insumo)
-        <!-- Modal -->
         <div class="modal fade bd-example-modal-lg" id="modalInsumo-{{ $insumo->id }}" tabindex="-1"
             aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
@@ -154,7 +130,7 @@
                     <div class="modal-header">
                         <h4 class="modal-title font-bold" id="exampleModalLabel">Detalle del Insumo</h4>
                     </div>
-                    <div class="modal-body  text-center">
+                    <div class="modal-body text-center">
                         <label class="text-center font-bold">
                             <h4>{{ $insumo->nombre }}</h4>
                         </label>
@@ -162,7 +138,6 @@
                             <label class="block">Descripción:</label>
                             <span class="block">{{ $insumo->descripcion }}</span>
                         </div>
-                        <!-- Subtabla para mostrar características adicionales -->
                         <div class="mb-3">
                             <table class="table">
                                 <thead class="thead-dark">
@@ -180,14 +155,16 @@
                                             <tr>
                                                 <td>{{ $caracteristica->invima }}</td>
                                                 <td>{{ $caracteristica->lote }}</td>
-                                                <td>{{\Carbon\Carbon::parse($caracteristica->vencimiento)->format('d-m-Y')}}</td>
+                                                <td>{{ \Carbon\Carbon::parse($caracteristica->vencimiento)->format('d-m-Y') }}
+                                                </td>
                                                 <td>{{ $caracteristica->cantidad }}</td>
                                                 <td>
                                                     <div class="btn-group" role="group">
                                                         <a href="{{ url('/insumo/' . $insumo->id . '/caracteristica/' . $caracteristica->id . '/edit') }}"
                                                             class="text-decoration-none text-white">
-                                                            <button type="submit" class="btn btn-warning "><i
-                                                                    class="fa fa-file" aria-hidden="true"></i></button></a>
+                                                            <button type="submit" class="btn btn-warning"><i
+                                                                    class="fa fa-file"
+                                                                    aria-hidden="true"></i></button></a>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -212,33 +189,56 @@
 @stop
 
 @section('js')
-    <script></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/js.js"></script>
     <script>
-        $(document).ready(function() {
+        function confirmDelete(insumoId) {
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: 'Esta acción se puede revertir.',
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "##3085d6",
+                confirmButtonText: "Confirmar"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: "Accion Exitosa",
+                        icon: "success"
+                    });
+                    document.getElementById('delete-form-' + insumoId).submit();
+                }
+            });
+        }
 
-            $("#search").keyup(function() {
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectCategoria = document.getElementById('id_categoria');
 
-                _this = this;
-
-
-
-                $.each($("#datos tbody tr"), function() {
-
-                    if ($(this).text().toLowerCase().indexOf($(_this).val().toLowerCase()) === -1)
-
-                        $(this).hide();
-
-                    else
-
-                        $(this).show();
-
-                });
-
+            // Escuchar cambios en el select de categoría
+            selectCategoria.addEventListener('change', function() {
+                document.getElementById('filterForm')
+            .submit(); // Enviar el formulario al cambiar la categoría
             });
 
+            const selectPageSize = document.getElementById('pageSize');
+
+            // Obtener el tamaño de página de la URL actual
+            const urlParams = new URLSearchParams(window.location.search);
+            const pageSizeFromUrl = urlParams.get('page_size');
+
+            // Establecer el valor del tamaño de página en el select
+            if (pageSizeFromUrl) {
+                selectPageSize.value = pageSizeFromUrl;
+            }
+
+            // Escuchar cambios en el select de tamaño de página
+            selectPageSize.addEventListener('change', function() {
+                const pageSize = this.value;
+                document.getElementById('pageSizeHidden').value = pageSize; // Actualizar el campo oculto
+                document.getElementById('filterForm').submit(); // Enviar el formulario
+            });
         });
-        
     </script>
 @stop

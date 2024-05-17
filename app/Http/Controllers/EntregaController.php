@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreEntregaRequest;
 use App\Models\Caracteristica;
+use App\Models\Categoria;
 use App\Models\Comprobante;
 use App\Models\Entrega;
 use App\Models\Insumo;
@@ -40,8 +41,9 @@ class EntregaController extends Controller
     public function create()
     {
         
-        $insumos = Insumo::where('estado', 1)->get();
+        $insumos = Insumo::where('estado', 1)->where('stock', '>', 0)->get();
         $servicios = Servicio::where('estado', 1)->get();
+        $categorias = Categoria::all();
         $comprobantes = Comprobante::all();
         $todasVariantes = collect();
 
@@ -52,7 +54,7 @@ class EntregaController extends Controller
         // Establecer el índice predeterminado de la variante seleccionada (puedes ajustarlo según tus necesidades)
         $varianteIndex = 0;
 
-        return view('crud.entrega.create', compact('insumos', 'servicios', 'comprobantes', 'todasVariantes', 'varianteIndex'));
+        return view('crud.entrega.create', compact('insumos', 'servicios', 'comprobantes', 'todasVariantes', 'varianteIndex','categorias'));
     }
 
 

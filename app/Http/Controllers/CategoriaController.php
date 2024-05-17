@@ -13,10 +13,12 @@ class CategoriaController extends Controller
   /**
    * Display a listing of the resource.
    */
-  public function index()
+  public function index(Request $request)
   {
-    $datosCategoria['categorias'] = Categoria::paginate(10);
-    return view('crud.categoria.index', $datosCategoria);
+      $query = Categoria::query();
+
+      $categorias = $query->orderBy('estado', 'desc')->paginate($request->input('page_size', 10));
+      return view('crud.categoria.index', compact('categorias'));
   }
   /**
    * Show the form for creating a new resource.
@@ -56,11 +58,16 @@ class CategoriaController extends Controller
   /**
    * Update the specified resource in storage.
    */
-  public function update(UpdateCategoriaRequest $request, string $id,)
+  public function update(Request $request, $id)
   {
-    $datosCategoria = request()->except(['_token', '_method']);
-    Categoria::where('id', '=', $id)->update($datosCategoria);
-    return redirect('categoria')->with('Mensaje2', 'Categoria');
+      $request->validate([
+          'nombre' => 'required|max:60|unique:categorias,nombre,' . $id,
+          'descripcion' => 'nullable|max:255',
+      ]);
+
+      $datosCategoria = $request->except(['_token', '_method']);
+      Categoria::where('id', $id)->update($datosCategoria);
+      return redirect('categoria')->with('Mensaje2', 'Categoria actualizada');
   }
 
   /**

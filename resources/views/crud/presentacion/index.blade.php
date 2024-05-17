@@ -43,6 +43,26 @@
         </script>
     @endif
 
+    @if (session('Mensaje3'))
+        <script>
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "top-end",
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                }
+            });
+            Toast.fire({
+                icon: "success",
+                title: "Presentacion Restaurada"
+            });
+        </script>
+    @endif
+
     <div class="form-row">
         <div class="col-sm-12 d-flex align-items-center justify-content-between">
             <a href="{{ url('/presentacion/create') }}" class="text-decoration-none text-white">
@@ -113,10 +133,14 @@
                                                 aria-hidden="true"></i></button></a>
                                 </div>
                                 <div class="btn-group" role="group">
-                                    @if($presentacion->estado == 1)
-                                        <button type="submit" class="btn btn-danger" data-toggle="modal" data-target="#eliminar-{{$presentacion->id}}">Eliminar</button>
+                                    @if ($presentacion->estado == 1)
+                                        <button type="submit" class="btn btn-danger" data-toggle="modal"
+                                            data-target="#eliminar-{{ $presentacion->id }}"><i class="fa fa-trash"
+                                                aria-hidden="true"></i></button>
                                     @else
-                                        <button type="submit" class="btn btn-success" data-toggle="modal" data-target="#eliminar-{{$presentacion->id}}">Restaurar</button>
+                                        <button type="submit" class="btn btn-success" data-toggle="modal"
+                                            data-target="#eliminar-{{ $presentacion->id }}"><i class="fa fa-share"
+                                                aria-hidden="true"></i></button>
                                     @endif
                                 </div>
                             </td>
@@ -128,7 +152,8 @@
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <h5 class="modal-title" id="exampleModalLabel">
-                                            {{ $presentacion->estado == 1 ? 'Eliminar presentacion' : 'Restaurar presentacion' }} <br>
+                                            {{ $presentacion->estado == 1 ? 'Eliminar presentacion' : 'Restaurar presentacion' }}
+                                            <br>
                                         </h5>
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>

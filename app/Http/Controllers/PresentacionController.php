@@ -10,10 +10,15 @@ class PresentacionController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $datosPresentacion['presentaciones']=Presentacione::paginate(10);
-        return view('crud.presentacion.index',$datosPresentacion);    }
+        $query = Presentacione::query();
+    
+        // Filtrar y ordenar por estado (primero estado 1, luego estado 0)
+        $presentaciones = $query->orderBy('estado', 'desc')->paginate($request->input('page_size', 10));
+    
+        return view('crud.presentacion.index', compact('presentaciones'));
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -54,10 +59,15 @@ class PresentacionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
-    {
+    public function update(Request $request, $id)
+  {
+      $request->validate([
+          'nombre' => 'required|max:60|unique:presentaciones,nombre,' . $id,
+          'descripcion' => 'nullable|max:255',
+      ]);
+
         $datosPresentacion=request()->except(['_token','_method']);
-        Presentacione::where('id','=',$id)->update($datosPresentacion);
+        Presentacione::where('id',$id)->update($datosPresentacion);
         return redirect('presentacion')->with('Mensaje','Presentacion');
   
     }

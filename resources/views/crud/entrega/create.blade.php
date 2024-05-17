@@ -8,11 +8,10 @@
 
     @section('content')
 
-
         <form action="{{ url('/entrega') }}" method="post">
             @csrf
 
-            <div class="container mt-4">
+            <div class="container mt-   4">
                 <div class="row gy-4">
                     <div class="col-md-8">
                         <div class="text-white bg-primary p-1 text-center">
@@ -21,9 +20,20 @@
                         <div class="p-3 border border-3 border-primary">
                             <div class="row">
 
+                                {{-- <div class="col-md-12">
+                                    <label for="categoria">Categoría:</label>
+                                    <select data-size="8" title="Seleccionar Categoria..." data-live-search="true"
+                                    name="categoria" id="categoria" data-style="btn-white"
+                                    class="form-control selectpicker show-tick ">
+                                        @foreach($categorias as $categoria)
+                                            <option value="{{ $categoria->id }}">{{ $categoria->nombre }}</option>
+                                        @endforeach
+                                    </select>
+                                </div> --}}
+                                
                                 <div class="col-md-12 mb-2">
                                     <label class="form-label">Insumos:</label>
-                                    <select data-size="10" title="Seleccionar Insumos..." data-live-search="true"
+                                    <select data-size="8" title="Seleccionar Insumos..." data-live-search="true"
                                         name="nombre" id="nombre" data-style="btn-white"
                                         class="form-control selectpicker show-tick ">
                                         @foreach ($insumos as $item)
@@ -37,15 +47,13 @@
                                     <select data-size="10" title="Seleccionar Variante..." data-live-search="true"
                                         name="variante" id="variante" data-style="btn-white"
                                         class="form-control selectpicker show-tick ">
-
                                     </select>
                                 </div>
 
                                 <div class="col-md-6 mb-2">
                                     <label class="form-label">En Stock:</label>
-                                    <input type="text" class="form-control">
-
-                                </div>
+                                    <input type="text" class="form-control" id="stock_actual" readonly>
+                                </div>                                
 
                                 <div class="col-md-6 mb-2">
                                     <label class="form-label">Cantidad:</label>
@@ -158,7 +166,6 @@
         </form>
     @stop
 
-
     @section('css')
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @stop
@@ -169,48 +176,45 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js"></script>
 
         <script>
-            $(document).ready(function() {
-                $('#nombre').change(function() {
-                    let insumoId = $(this).val();
-                    console.log("Insumo seleccionado:", insumoId); // Verificar el valor de insumoId
-                    // Limpiar las opciones anteriores del select de variantes
-                    $('#variante').empty();
-                    $.ajax({
-                        url: "{{ url('/get-caracteristicas') }}",
-                        type: "GET",
-                        data: {
-                            insumo_id: insumoId
-                        },
-                        success: function(response) {
-                            // Limpiar las opciones anteriores del select de variantes
-                            $('#variante').empty();
-                            // Agregar las nuevas opciones correspondientes al insumo seleccionado
-                            $.each(response.caracteristicas, function(key, value) {
-                                if (value.cantidad > 0 && value.insumo_id == insumoId) {
-                                    $('#variante').append('<option value="' + value.id +
-                                        '">' +
-                                        value.invima + ' - ' + value.lote + ' - ' +
-                                        value.vencimiento + '</option>');
-                                }
-                            });
-                            // Refrescar el plugin selectpicker después de actualizar las opciones
-                            $('#variante').selectpicker('refresh');
-                        }
-                    }).done(function() {
-                        // Limpiar el select de variantes cuando se cambie la selección de insumos
-                        $('#variante').selectpicker('val', '');
-                    });
+            $('#nombre').change(function() {
+                let insumoId = $(this).val();
+                console.log("Insumo seleccionado:", insumoId);
+                console.log("Antes de vaciar el select de variantes:", $('#variante').html());
+
+                $('#variante').selectpicker('destroy');
+
+                $('#variante').empty();
+
+                // Realizar la llamada AJAX y agregar nuevas opciones
+                $.ajax({
+                    url: "{{ url('/get-caracteristicas') }}",
+                    type: "GET",
+                    data: {
+                        insumo_id: insumoId
+                    },
+                    success: function(response) {
+                        let caracteristicasFiltradas = response.caracteristicas.filter(function(
+                            caracteristica) {
+                            return caracteristica.insumo_id == insumoId && caracteristica.cantidad >
+                                0;
+                        });
+
+                        // Agregar las nuevas opciones al select de variantes
+                        caracteristicasFiltradas.forEach(function(caracteristica) {
+                            $('#variante').append('<option value="' + caracteristica.id +
+                                '">' +
+                                caracteristica.invima + ' - ' + caracteristica.lote + ' - ' +
+                                caracteristica.vencimiento + '</option>');
+                        });
+
+                        $('#variante').selectpicker();
+                    }
+                }).done(function() {
+                    $('#variante').selectpicker('val', '');
                 });
 
-                $('#btn_agregar').click(function() {
-                    agregarinsumo();
-                });
-            });
-        </script>
 
 
-        <script>
-            $(document).ready(function() {
                 $('#btn_agregar').click(function() {
                     agregarinsumo();
                 });
@@ -225,17 +229,17 @@
                 let cantidad = parseInt($('#stock').val());
                 let variante = $('#variante').val();
 
-
                 if (id_insumo != '' && nameinsumo != '' && cantidad != '') {
-
                     if (cantidad > 0 && (cantidad % 1 == 0)) {
-
                         let fila = '<tr id="fila' + cont + '">' +
                             '<th>' + (cont + 1) + '</th>' +
-                            '<td><input type="hidden" name="arrayidinsumo[]" value="' + id_insumo + '">' + nameinsumo +
+                            '<td><input type="hidden" name="arrayidinsumo[]" value="' + id_insumo + '">' +
+                            nameinsumo +
                             '</td>' +
-                            '<td><input type="hidden" name="arraycantidad[]" value="' + cantidad + '">' + cantidad + '</td>' +
-                            '<td><input type="hidden" name="arrayvariante[]" value="' + variante + '">' + variante + '</td>' +
+                            '<td><input type="hidden" name="arraycantidad[]" value="' + cantidad + '">' + cantidad +
+                            '</td>' +
+                            '<td><input type="hidden" name="arrayvariante[]" value="' + variante + '">' + variante +
+                            '</td>' +
                             '<td><button class="btn btn-danger" type="button" onClick="eliminarInsumo(' + cont +
                             ')"><i class="fa fa-trash"></i></button></td>' +
                             '</tr>';
@@ -248,8 +252,6 @@
                     } else {
                         showModal('Valores Incorrectos')
                     }
-
-
                 } else {
                     showModal('Campos Obligatorios')
                 }
@@ -260,20 +262,15 @@
                 let selectVariante = $('#variante');
 
                 selectNombre.selectpicker('val', ''); // Limpiar select de nombre
-                selectVariante.selectpicker('val', ''); // Limpiar select de 
-                selectVariante.selectpicker('val', ''); // Limpiar select de 
+                selectVariante.selectpicker('val', ''); // Limpiar select de variante
                 $('#stock').val(''); // Limpiar campo de cantidad
             }
-
-
-
             function eliminarInsumo(indice) {
                 let cantidadEliminada = parseInt($('#fila' + indice).find('td:eq(1)').text());
                 total -= cantidadEliminada;
                 $('#fila' + indice).remove();
                 $('#total').html(total);
             }
-
 
             function recalcularTotal() {
                 total = 0;
@@ -302,5 +299,4 @@
                 })
             }
         </script>
-
     @stop
