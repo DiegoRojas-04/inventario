@@ -16,6 +16,13 @@ use Illuminate\Support\Facades\DB;
 class EntregaController extends Controller
 {
 
+    public function getStock(Request $request)
+    {
+        $insumoId = $request->input('insumo_id');
+        $stock = Insumo::findOrFail($insumoId)->stock;
+        return response()->json(['stock' => $stock]);
+    }
+
     // En el controlador EntregaController
     public function getCaracteristicas(Request $request)
     {
@@ -40,7 +47,7 @@ class EntregaController extends Controller
      */
     public function create()
     {
-        
+
         $insumos = Insumo::where('estado', 1)->where('stock', '>', 0)->get();
         $servicios = Servicio::where('estado', 1)->get();
         $categorias = Categoria::all();
@@ -54,7 +61,7 @@ class EntregaController extends Controller
         // Establecer el índice predeterminado de la variante seleccionada (puedes ajustarlo según tus necesidades)
         $varianteIndex = 0;
 
-        return view('crud.entrega.create', compact('insumos', 'servicios', 'comprobantes', 'todasVariantes', 'varianteIndex','categorias'));
+        return view('crud.entrega.create', compact('insumos', 'servicios', 'comprobantes', 'todasVariantes', 'varianteIndex', 'categorias'));
     }
 
 
@@ -110,7 +117,7 @@ class EntregaController extends Controller
     //     return redirect('entrega')->with('Mensaje', 'Entrega');
     // }
     //
-    
+
     public function store(StoreEntregaRequest $request)
     {
         try {
@@ -120,53 +127,53 @@ class EntregaController extends Controller
             $arrayCantidad = $request->get('arraycantidad');
             $arrayVariante = $request->get('arrayvariante');
             $totalCantidadEntregada = 0;
-    
+
             // Recorrer cada variante de insumo y su cantidad correspondiente
             foreach ($arrayInsumo as $key => $insumoId) {
                 $variante = $arrayVariante[$key];
                 $cantidad = $arrayCantidad[$key];
-    
+
                 // Asociar la variante y la cantidad a la entrega
                 $entrega->insumos()->attach([
                     $insumoId => [
                         'cantidad' => $cantidad
                     ]
                 ]);
-    
+
                 // Aumentar el total de cantidad entregada
                 $totalCantidadEntregada += $cantidad;
             }
-    
+
             // Descuento de stock de las variantes
             $variantesConCantidad = array_combine($arrayVariante, $arrayCantidad);
-    
+
             foreach ($variantesConCantidad as $varianteId => $cantidad) {
                 // Actualizar el stock de la variante seleccionada
                 DB::table('insumo_caracteristicas')
                     ->where('id', $varianteId)
                     ->decrement('cantidad', intval($cantidad));
             }
-    
+
             // Descuento de stock del insumo principal
             foreach ($arrayInsumo as $key => $insumoId) {
                 $cantidad = $arrayCantidad[$key];
-            
+
                 // Obtener el insumo asociado a la variante
                 $insumo = Insumo::findOrFail($insumoId);
-            
+
                 // Decrementar el stock del insumo principal
                 $insumo->decrement('stock', intval($cantidad));
             }
-    
+
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
             // Manejar el error según tu lógica
         }
-    
+
         return redirect('entrega')->with('Mensaje', 'Entrega');
     }
-    
+
 
 
 
@@ -180,7 +187,7 @@ class EntregaController extends Controller
         $detalleEntrega = $entrega->insumos()->with(['caracteristicas' => function ($query) {
             $query->select('insumo_id', 'invima', 'lote', 'vencimiento');
         }])->get();
-        return view('crud.entrega.show', compact('entrega', 'insumo','detalleEntrega'));
+        return view('crud.entrega.show', compact('entrega', 'insumo', 'detalleEntrega'));
     }
 
     /**

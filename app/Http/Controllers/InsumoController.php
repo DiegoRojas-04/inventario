@@ -15,17 +15,7 @@ class InsumoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    // public function index(Request $request)
-    // {
-    //     $pageSize = $request->input('page_size',10);
-    //     $datosInsumo['insumos'] = Insumo::paginate($pageSize);
-    //     $categorias = Categoria::all();
-    //     return view('crud.insumo.index', $datosInsumo)->with('categorias', $categorias); 
-    // }
-    
 
-
-    
    public function index(Request $request)
 {
     $query = Insumo::query();
@@ -40,13 +30,7 @@ class InsumoController extends Controller
     $insumos = $query->orderBy('estado', 'desc')->paginate($request->input('page_size', 10));
 
     return view('crud.insumo.index', compact('insumos', 'categorias'));
-}
-
-
-  
-  
-  
-
+} 
     /**
      * Show the form for creating a new resource.
      */
@@ -77,8 +61,7 @@ class InsumoController extends Controller
      */
     public function show(string $id)
     {
-        // $post = Insumo::find($id);
-        // return view('posts.show', compact('post'));
+        //
     }
 
     /**
@@ -116,17 +99,6 @@ class InsumoController extends Controller
             'vida_util' => $request->input('vida_util'),
             // 'stock' => $request->input('stock'),
         ]);
-        // $insumo->nombre = $request->input('nombre');
-        // $insumo->descripcion = $request->input('descripcion');
-        // $insumo->requiere_invima = $request->has('requiere_invima') ? 1 : 0;
-        // $insumo->requiere_lote = $request->has('requiere_lote') ? 1 : 0;
-        // $insumo->id_categoria = $request->input('id_categoria');
-        // $insumo->id_marca = $request->input('id_marca');
-        // $insumo->id_presentacion = $request->input('id_presentacion');
-        // $insumo->riesgo = $request->input('riesgo');
-        // $insumo->vida_util = $request->input('vida_util');
-        // $insumo->stock = $request->input('stock');
-
         $insumo->save();
         return redirect('insumo')->with('Mensaje2', 'Insumo Actualizada Correctamente');
     }

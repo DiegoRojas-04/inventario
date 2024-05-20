@@ -9,7 +9,6 @@
 @section('content')
     <p>Al eliminar un insumo del carrito se descudra el total</p>
     <p>Los detalles de venta y de compra, mostrar bien las caracteristicas que se vendieron o compraron</p>
-    <p>Ver el stock del insumo que voy a entregar y las validaciones de venta</p>
 @stop
 
 @section('css')

@@ -8,7 +8,8 @@
 
 @section('content')
 
-    <form action="{{ url('/compra') }}" method="post">
+
+    <form id="compra-form" action="{{ url('/compra') }}" method="post">
         @csrf
 
         <div class="container mt-4">
@@ -23,7 +24,7 @@
                             <div class="col-md-12 mb-2">
                                 <label class="form-label">Insumos:</label>
                                 <select data-size="8" title="Seleccionar Insumos..." data-live-search="true" name="nombre"
-                                    id="nombre" data-style="btn-white" class="form-control selectpicker show-tick ">
+                                    id="nombre" data-style="btn-white" class="form-control selectpicker show-tick">
                                     @foreach ($insumos as $item)
                                         <option value="{{ $item->id }}" data-requiere-lote="{{ $item->requiere_lote }}"
                                             data-requiere-invima="{{ $item->requiere_invima }}">
@@ -49,7 +50,6 @@
                                     class="form-control">
                             </div>
 
-
                             <div class="col-md-6 mb-2">
                                 <label class="form-label">Cantidad:</label>
                                 <input type="number" name="stock" id="stock" class="form-control" placeholder="0">
@@ -71,7 +71,6 @@
                                                 <th>Fecha</th>
                                                 <th>Cantidad</th>
                                                 <th><i class="fa fa-trash"></i></th>
-
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -83,7 +82,6 @@
                                                 <td></td>
                                                 <td></td>
                                                 <td></td>
-
                                             </tr>
                                         </tbody>
                                         <tfoot>
@@ -97,9 +95,6 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-12">
-
-                            </div>
                             <div class="col-md-12 mb-2">
                                 <button type="button" class="btn btn-danger" data-bs-toggle="modalCancelar"
                                     data-bs-target="#exampleModal">
@@ -124,9 +119,6 @@
                                         <option value="{{ $item->id }}">{{ $item->nombre }}</option>
                                     @endforeach
                                 </select>
-                                @error('proveedor_id')
-                                    <small class="text-danger">{{ '' . $message }}</small>
-                                @enderror
                             </div>
 
                             <div class="col-md-12 mb-2">
@@ -138,19 +130,12 @@
                                         <option value="{{ $item->id }}">{{ $item->tipo_comprobante }}</option>
                                     @endforeach
                                 </select>
-                                @error('comprobante_id')
-                                    <strong class="text-danger">{{ '' . $message }}</strong>
-                                @enderror
-
                             </div>
 
                             <div class="col-md-12 mb-2">
                                 <label>Numero de Comprobante:</label>
                                 <input required type="text" name="numero_comprobante" id="numero_comprobante"
-                                    class="form-control" required>
-                                @error('proveedor_id')
-                                    <small class="text-danger">{{ '' . $message }}</small>
-                                @enderror
+                                    class="form-control">
                             </div>
 
                             <div class="col-md-12 mb-2">
@@ -165,7 +150,8 @@
                             </div>
 
                             <div class="col-md-12 mb-2 text-center">
-                                <button type="submit" class="btn btn-success">Guardar</button>
+                                <button type="button" class="btn btn-success"
+                                    onclick="confirmAndSubmit(event)">Guardar</button>
                             </div>
                         </div>
                     </div>
@@ -183,68 +169,68 @@
     href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/css/bootstrap-select.min.css">
 @section('js')
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            // Función para manejar el cambio en el select
-            $('#nombre').change(function() {
-                // Obtener el valor del insumo seleccionado
-                let id_insumo = $(this).val();
+   <script>
+    $(document).ready(function() {
+        // Función para manejar el cambio en el select
+        $('#nombre').change(function() {
+            // Obtener el valor del insumo seleccionado
+            let id_insumo = $(this).val();
 
-                // Obtener si requiere lote y mostrar u ocultar los campos
-                let requiere_lote = $(this).find('option:selected').data('requiere-lote');
-                if (requiere_lote == 1) {
-                    mostrarCamposLote();
-                } else {
-                    ocultarCamposLote();
-                }
+            // Obtener si requiere lote y mostrar u ocultar los campos
+            let requiere_lote = $(this).find('option:selected').data('requiere-lote');
+            if (requiere_lote == 1) {
+                mostrarCamposLote();
+            } else {
+                ocultarCamposLote();
+            }
 
-                // Obtener si requiere invima y mostrar u ocultar los campos
-                let requiere_invima = $(this).find('option:selected').data('requiere-invima');
-                if (requiere_invima == 1) {
-                    mostrarCamposInvima();
-                } else {
-                    ocultarCamposInvima();
-                }
-            });
+            // Obtener si requiere invima y mostrar u ocultar los campos
+            let requiere_invima = $(this).find('option:selected').data('requiere-invima');
+            if (requiere_invima == 1) {
+                mostrarCamposInvima();
+            } else {
+                ocultarCamposInvima();
+            }
         });
+    });
 
-        // Funciones para mostrar y ocultar campos
-        function mostrarCamposLote() {
-            $('#campos_lote_fecha').show();
-            $('#campos_vencimiento').show();
-        }
+    // Funciones para mostrar y ocultar campos
+    function mostrarCamposLote() {
+        $('#campos_lote_fecha').show();
+        $('#campos_vencimiento').show();
+    }
 
-        function ocultarCamposLote() {
-            $('#campos_lote_fecha').hide();
-            $('#campos_vencimiento').hide();
-        }
+    function ocultarCamposLote() {
+        $('#campos_lote_fecha').hide();
+        $('#campos_vencimiento').hide();
+    }
 
-        function mostrarCamposInvima() {
-            $('#campos_invima').show();
-        }
+    function mostrarCamposInvima() {
+        $('#campos_invima').show();
+    }
 
-        function ocultarCamposInvima() {
-            $('#campos_invima').hide();
-        }
-    </script>
-    <script>
-        $(document).ready(function() {
-            $('#btn_agregar').click(function() {
-                agregarinsumo();
-            });
+    function ocultarCamposInvima() {
+        $('#campos_invima').hide();
+    }
+</script>
+<script>
+    $(document).ready(function() {
+        $('#btn_agregar').click(function() {
+            agregarinsumo();
         });
+    });
 
-        let cont = 0;
-        let total = 0;
+    let cont = 0;
+    let total = 0;
 
-        function agregarinsumo() {
-            let id_insumo = $('#nombre').val();
-            let nameinsumo = $('#nombre option:selected').text();
-            let cantidad = parseInt($('#stock').val());
-            let lote = $('#lote').val();
-            let vencimiento = $('#vencimiento').val();
-            let invima = $('#invima').val();
-            
+    function agregarinsumo() {
+        let id_insumo = $('#nombre').val();
+        let nameinsumo = $('#nombre option:selected').text();
+        let cantidad = parseInt($('#stock').val());
+        let lote = $('#lote').val();
+        let vencimiento = $('#vencimiento').val();
+        let invima = $('#invima').val();
+
             // && lote != ''  && vencimiento != ''  && invima != ''
             if (id_insumo != '' && nameinsumo != '' && cantidad != '') {
                 if (cantidad > 0 && (cantidad % 1 == 0)) {
@@ -320,6 +306,45 @@
                 title: message
             })
         }
+
+        function confirmAndSubmit(event) {
+            event.preventDefault();
+            let proveedor = $('#proveedor_id').val();
+            let comprobante = $('#comprobante_id').val();
+            let numeroComprobante = $('#numero_comprobante').val();
+            let rows = $('#tabla_detalle tbody tr').length;
+
+            if (!proveedor || !comprobante || !numeroComprobante || rows === 1) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se puede realizar la compra'
+                });
+            } else {
+                Swal.fire({
+                    title: '¿Está seguro?',
+                    text: 'Desea realizar la compra',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#55aa38',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Confirmar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire({
+                            title: 'Acción Exitosa',
+                            icon: 'success',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                        setTimeout(() => {
+                            $('#compra-form').submit();
+                        }, 1500);
+                    }
+                });
+            }
+        }
     </script>
 
 @stop
+

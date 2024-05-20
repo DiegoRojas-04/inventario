@@ -33,6 +33,9 @@ Route::resource('proveedor', ProveedorController::class);
 Route::resource('compra', CompraController::class);
 Route::resource('perfil', PerfilController::class);
 Route::get('/insumo/search', [InsumoController::class, 'search'])->name('insumo.search');
+Route::get('/get-stock', [EntregaController::class, 'getStock'])->name('get-stock');
 Route::get('/get-caracteristicas', [EntregaController::class, 'getCaracteristicas']);
 Route::get('/insumo/{insumoId}/caracteristica/{caracteristicaId}/edit', 'App\Http\Controllers\InsumoCaracteristicaController@edit');
 Route::patch('/insumo/{insumoId}/caracteristica/{caracteristicaId}', [InsumoCaracteristicaController::class, 'update'])->name('caracteristica.update');
+
+

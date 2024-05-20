@@ -66,9 +66,9 @@
                                     </form>
                                 </div>
 
-                                <div class="btn-group" role="group">
+                                {{-- <div class="btn-group" role="group">
                                     <button type="button" class="btn btn-danger">Eliminar</button>
-                                </div>
+                                </div> --}}
                             </td>
                         </tr>
                     @endforeach
