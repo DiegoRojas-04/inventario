@@ -15,7 +15,7 @@ class PresentacionController extends Controller
         $query = Presentacione::query();
     
         // Filtrar y ordenar por estado (primero estado 1, luego estado 0)
-        $presentaciones = $query->orderBy('estado', 'desc')->paginate($request->input('page_size', 10));
+        $presentaciones = $query->orderBy('estado', 'desc')->orderBy('nombre', 'asc')->paginate($request->input('page_size', 10));
     
         return view('crud.presentacion.index', compact('presentaciones'));
     }

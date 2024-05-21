@@ -37,5 +37,3 @@ Route::get('/get-stock', [EntregaController::class, 'getStock'])->name('get-stoc
 Route::get('/get-caracteristicas', [EntregaController::class, 'getCaracteristicas']);
 Route::get('/insumo/{insumoId}/caracteristica/{caracteristicaId}/edit', 'App\Http\Controllers\InsumoCaracteristicaController@edit');
 Route::patch('/insumo/{insumoId}/caracteristica/{caracteristicaId}', [InsumoCaracteristicaController::class, 'update'])->name('caracteristica.update');
-
-

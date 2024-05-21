@@ -30,7 +30,9 @@ class Insumo extends Model
 
     public function entregas()
     {
-        return $this->belongsToMany(Entrega::class)->withTimestamps()->withPivot('cantidad');
+        return $this->belongsToMany(Entrega::class)
+                    ->withPivot('cantidad', 'invima', 'lote', 'vencimiento')
+                    ->withTimestamps();
     }
 
     public function marca()

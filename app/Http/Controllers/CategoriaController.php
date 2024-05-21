@@ -16,8 +16,7 @@ class CategoriaController extends Controller
   public function index(Request $request)
   {
       $query = Categoria::query();
-
-      $categorias = $query->orderBy('estado', 'desc')->paginate($request->input('page_size', 10));
+      $categorias = $query->orderBy('estado', 'desc')->orderBy('nombre', 'asc')->paginate($request->input('page_size', 10));
       return view('crud.categoria.index', compact('categorias'));
   }
   /**

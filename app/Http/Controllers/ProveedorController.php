@@ -16,7 +16,7 @@ class ProveedorController extends Controller
         $query = Proveedore::query();
     
         // Filtrar y ordenar por estado (primero estado 1, luego estado 0)
-        $proveedores = $query->orderBy('estado', 'desc')->paginate($request->input('page_size', 10));
+        $proveedores = $query->orderBy('estado', 'desc')->orderBy('nombre', 'asc')->paginate($request->input('page_size', 10));
     
         return view('crud.proveedor.index', compact('proveedores'));
     }

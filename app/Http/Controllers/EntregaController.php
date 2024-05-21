@@ -8,6 +8,7 @@ use App\Models\Categoria;
 use App\Models\Comprobante;
 use App\Models\Entrega;
 use App\Models\Insumo;
+use Carbon\Carbon;
 use App\Models\Servicio;
 use Exception;
 use Illuminate\Http\Request;
@@ -35,9 +36,23 @@ class EntregaController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $entregas = Entrega::with('comprobante')->where('estado', 1)->latest()->get();
+        $query = Entrega::with('comprobante')->where('estado', 1);
+
+        // Verifica si se enviaron fechas en la solicitud
+        if ($request->filled('fecha_inicio') && $request->filled('fecha_fin')) {
+            // Convierte las fechas de texto en objetos Carbon para poder compararlas
+            $fechaInicio = Carbon::createFromFormat('Y-m-d', $request->input('fecha_inicio'))->startOfDay();
+            $fechaFin = Carbon::createFromFormat('Y-m-d', $request->input('fecha_fin'))->endOfDay();
+
+            // Filtra las entregas dentro del rango de fechas seleccionado
+            $query->whereBetween('fecha_hora', [$fechaInicio, $fechaFin]);
+        }
+
+        // Obtén las entregas filtradas y aplica la paginación
+        $entregas = $query->latest()->paginate(5); // Puedes cambiar 10 por la cantidad de elementos que quieras por página
+
         return view('crud.entrega.index', compact('entregas'));
     }
 
@@ -73,51 +88,6 @@ class EntregaController extends Controller
     // EntregaController@store
 
 
-    // public function store(StoreEntregaRequest $request)
-    // {
-    //     try {
-    //         DB::beginTransaction();
-    //         $entrega = Entrega::create($request->validated());
-    //         $arrayInsumo = $request->get('arrayidinsumo');
-    //         $arrayCantidad = $request->get('arraycantidad');
-    //         $arrayVariante = $request->get('arrayvariante');
-
-    //         // Recorrer cada variante de insumo y su cantidad correspondiente
-    //         foreach ($arrayInsumo as $key => $insumoId) {
-    //             $variante = $arrayVariante;
-    //             $cantidad = $arrayCantidad[$key];
-
-    //             // Verificar si esta es la variante seleccionada en la venta
-    //             if ($key === intval($request->get('caracteristica'))) {
-
-    //                 // Actualizar el stock de la variante seleccionada
-    //                 DB::table('insumo_caracteristicas')
-    //                     ->where('id', $variante)
-    //                     ->decrement('cantidad', intval($cantidad));
-
-    //                 // Actualizar el stock del insumo
-    //                 $insumo = Insumo::find($insumoId);
-    //                 $insumo->decrement('stock', intval($cantidad));
-    //             }
-
-    //             // Asociar la variante y la cantidad a la entrega
-    //             $entrega->insumos()->syncWithoutDetaching([
-    //                 $insumoId => [
-    //                     'cantidad' => $cantidad
-    //                 ]
-    //             ]);
-    //         }
-
-    //         DB::commit();
-    //     } catch (Exception $e) {
-    //         DB::rollBack();
-    //         // Manejar el error según tu lógica
-    //     }
-
-    //     return redirect('entrega')->with('Mensaje', 'Entrega');
-    // }
-    //
-
     public function store(StoreEntregaRequest $request)
     {
         try {
@@ -126,17 +96,26 @@ class EntregaController extends Controller
             $arrayInsumo = $request->get('arrayidinsumo');
             $arrayCantidad = $request->get('arraycantidad');
             $arrayVariante = $request->get('arrayvariante');
+            $arrayInvima = $request->get('arrayinvima'); // Agregado
+            $arrayLote = $request->get('arraylote'); // Agregado
+            $arrayVencimiento = $request->get('arrayvencimiento'); // Agregado
             $totalCantidadEntregada = 0;
 
             // Recorrer cada variante de insumo y su cantidad correspondiente
             foreach ($arrayInsumo as $key => $insumoId) {
                 $variante = $arrayVariante[$key];
                 $cantidad = $arrayCantidad[$key];
+                $invima = $arrayInvima[$key]; // Agregado
+                $lote = $arrayLote[$key]; // Agregado
+                $vencimiento = $arrayVencimiento[$key]; // Agregado
 
                 // Asociar la variante y la cantidad a la entrega
                 $entrega->insumos()->attach([
                     $insumoId => [
-                        'cantidad' => $cantidad
+                        'cantidad' => $cantidad,
+                        'invima' => $invima, // Agregado
+                        'lote' => $lote, // Agregado
+                        'vencimiento' => $vencimiento, // Agregado
                     ]
                 ]);
 
@@ -175,20 +154,20 @@ class EntregaController extends Controller
     }
 
 
-
-
     /**
      * Display the specified resource.
      */
     public function show($id)
     {
         $insumo = Insumo::all();
-        $entrega = Entrega::findOrFail($id);
+        $entrega = Entrega::with('insumos')->findOrFail($id);
         $detalleEntrega = $entrega->insumos()->with(['caracteristicas' => function ($query) {
             $query->select('insumo_id', 'invima', 'lote', 'vencimiento');
         }])->get();
         return view('crud.entrega.show', compact('entrega', 'insumo', 'detalleEntrega'));
     }
+
+
 
     /**
      * Show the form for editing the specified resource.

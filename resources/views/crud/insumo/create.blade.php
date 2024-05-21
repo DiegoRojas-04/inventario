@@ -62,16 +62,7 @@
                     <label>Lote Y Fecha</label>
                     <input type="checkbox" name="requiere_invima" class="form-control" value="1">
                 </div>
-{{-- 
-                <div class="col-md-4">
-                    <label>Registro Sanitario / Invima:</label>
-                    <input type="text" name="invima" class="form-control  @error('invima') is-invalid @enderror"
-                        value="{{ old('invima') }}">
-                    @error('invima')
-                        <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
-                    @enderror
-                </div> --}}
-
+                
                 <div class="col-md-4">
                     <label>Categoria:</label>
                     <select data-size="5" title="Seleccionar Categoria..." data-live-search="true" name="id_categoria"
@@ -115,24 +106,6 @@
                         <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
                     @enderror
                 </div>
-
-                {{-- <div class="col-md-6">
-                    <label>Fecha de vencimiento:</label>
-                    <input type="date" name="vencimiento"
-                        class="form-control  @error('vencimiento') is-invalid @enderror" value="{{ old('vencimiento') }}">
-                    @error('vencimiento')
-                        <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
-                    @enderror
-                </div>
-
-                <div class="col-md-6">
-                    <label>Lote:</label>
-                    <input type="text" name="lote" class="form-control  @error('lote') is-invalid @enderror"
-                        value="{{ old('lote') }}">
-                    @error('lote')
-                        <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
-                    @enderror
-                </div> --}}
 
                 <div class="col-md-4">
                     <label>Clasificacion de Riesgo:</label>

@@ -6,6 +6,64 @@
     <a href="{{ url('/insumo/create') }}" class="text-decoration-none text-white">
         <button type="submit" class="btn btn-primary">Agregar Insumos</button>
     </a>
+    @if (session('Mensaje'))
+    <script>
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+        Toast.fire({
+            icon: "error",
+            title: "Insumo Eliminado"
+        });
+    </script>
+@endif
+@if (session('Mensaje3'))
+    <script>
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+        Toast.fire({
+            icon: "success",
+            title: "Insumo Restaurado"
+        });
+    </script>
+@endif
+@if (session('Mensaje2'))
+    <script>
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+        Toast.fire({
+            icon: "success",
+            title: "Insumo Actualizado"
+        });
+    </script>
+@endif
+
     <br>
 @stop
 
@@ -70,7 +128,7 @@
                 <tbody class="text-center">
                     @foreach ($insumos as $insumo)
                         <tr>
-                            <td>{{ $insumo->nombre }}</td>
+                            <td >{{ $insumo->nombre }}</td>
                             <td>{{ $insumo->marca->nombre }}</td>
                             <td>{{ $insumo->presentacione->nombre }}</td>
                             <td>{{ $insumo->vida_util }}</td>
@@ -128,7 +186,7 @@
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title font-bold" id="exampleModalLabel">Detalle del Insumo</h4>
+                        <h4 class="modal-title font-bold" id="exampleModalLabel"></h4>
                     </div>
                     <div class="modal-body text-center">
                         <label class="text-center font-bold">

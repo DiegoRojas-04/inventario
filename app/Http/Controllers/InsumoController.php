@@ -25,7 +25,7 @@ class InsumoController extends Controller
     if ($request->has('id_categoria') && !empty($request->id_categoria)) {
         $query->where('id_categoria', $request->id_categoria);
     }
-
+    // ->orderBy('nombre', 'asc')
     // Filtrar y ordenar por estado (primero estado 1, luego estado 0)
     $insumos = $query->orderBy('estado', 'desc')->paginate($request->input('page_size', 10));
 

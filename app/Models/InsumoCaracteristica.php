@@ -11,6 +11,7 @@ class InsumoCaracteristica extends Model
 
     protected $fillable = [
         'insumo_id',
+        'compra_id', // Asegúrate de tener esta clave foránea
         'invima',
         'lote',
         'vencimiento',
@@ -20,5 +21,10 @@ class InsumoCaracteristica extends Model
     public function insumo()
     {
         return $this->belongsTo(Insumo::class, 'insumo_id');
+    }
+
+    public function compra()
+    {
+        return $this->belongsTo(Compra::class, 'compra_id');
     }
 }

@@ -31,7 +31,10 @@ class Entrega extends Model
         return $this->belongsTo(Comprobante::class);
     }
     
-    public function insumos(){
-        return $this->belongsToMany(Insumo::class)->withTimestamps()->withPivot('cantidad');
+    public function insumos()
+    {
+        return $this->belongsToMany(Insumo::class)
+                    ->withPivot('cantidad', 'invima', 'lote', 'vencimiento')
+                    ->withTimestamps();
     }
 }

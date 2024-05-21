@@ -78,15 +78,18 @@
             </div>
             <div class="card mb-4">
                 <div class="card-header text-center">
-                    <h5> Detalle de Entrega</h5>
+                    <h5>Detalle de Entrega</h5>
                 </div>
                 <div class="card-body table-responsive">
-                    <table class="table table-striped">
+                    <table class="table table-striped text-center">
                         <thead class="bg-primary text-white">
-                            <tr>
+                            <tr class="text-center">
                                 <th>Producto</th>
                                 <th>Marca</th>
                                 <th>Presentacion</th>
+                                <th>Invima</th>
+                                <th>Lote</th>
+                                <th>Vencimiento</th>
                                 <th>Cantidad</th>
                             </tr>
                         </thead>
@@ -96,6 +99,9 @@
                                     <td>{{ $item->nombre }}</td>
                                     <td>{{ $item->marca->nombre }}</td>
                                     <td>{{ $item->presentacione->nombre }}</td>
+                                    <td>{{ $item->pivot->invima }}</td>
+                                    <td>{{ $item->pivot->lote }}</td>
+                                    <td>{{ $item->pivot->vencimiento}}</td>
                                     <td>{{ $item->pivot->cantidad }}</td>
                                 </tr>
                             @endforeach
@@ -115,33 +121,3 @@
             console.log("Hi, I'm using the Laravel-AdminLTE package!");
         </script>
     @stop
-    {{-- 
-
-    <table class="table table-striped">
-        <thead class="bg-primary text-white text-center">
-            <tr>
-                <th>Producto</th>
-                <th>Marca</th>
-                <th>Presentacion</th>
-                <th>INVIMA</th>
-                <th>Lote</th>
-                <th>Vencimiento</th>
-                <th>Cantidad</th>
-            </tr>
-        </thead>
-        <tbody class="text-center">
-            @foreach ($detalleEntrega as $item)
-                @foreach ($item->caracteristicas as $caracteristica)
-                    <tr>
-                        <td>{{ $loop->first ? $item->nombre : '' }}</td>
-                        <td>{{ $loop->first ? $item->marca->nombre : '' }}</td>
-                        <td>{{ $loop->first ? $item->presentacione->nombre : '' }}</td>
-                        <td>{{ $caracteristica->invima }}</td>
-                        <td>{{ $caracteristica->lote }}</td>
-                        <td>{{ $caracteristica->vencimiento }}</td>
-                        <td>{{ $loop->last ? $item->pivot->cantidad : '' }}</td>
-                    </tr>
-                @endforeach
-            @endforeach
-        </tbody>
-    </table> --}}

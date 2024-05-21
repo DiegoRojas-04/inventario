@@ -169,67 +169,67 @@
     href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/css/bootstrap-select.min.css">
 @section('js')
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js"></script>
-   <script>
-    $(document).ready(function() {
-        // Función para manejar el cambio en el select
-        $('#nombre').change(function() {
-            // Obtener el valor del insumo seleccionado
-            let id_insumo = $(this).val();
+    <script>
+        $(document).ready(function() {
+            // Función para manejar el cambio en el select
+            $('#nombre').change(function() {
+                // Obtener el valor del insumo seleccionado
+                let id_insumo = $(this).val();
 
-            // Obtener si requiere lote y mostrar u ocultar los campos
-            let requiere_lote = $(this).find('option:selected').data('requiere-lote');
-            if (requiere_lote == 1) {
-                mostrarCamposLote();
-            } else {
-                ocultarCamposLote();
-            }
+                // Obtener si requiere lote y mostrar u ocultar los campos
+                let requiere_lote = $(this).find('option:selected').data('requiere-lote');
+                if (requiere_lote == 1) {
+                    mostrarCamposLote();
+                } else {
+                    ocultarCamposLote();
+                }
 
-            // Obtener si requiere invima y mostrar u ocultar los campos
-            let requiere_invima = $(this).find('option:selected').data('requiere-invima');
-            if (requiere_invima == 1) {
-                mostrarCamposInvima();
-            } else {
-                ocultarCamposInvima();
-            }
+                // Obtener si requiere invima y mostrar u ocultar los campos
+                let requiere_invima = $(this).find('option:selected').data('requiere-invima');
+                if (requiere_invima == 1) {
+                    mostrarCamposInvima();
+                } else {
+                    ocultarCamposInvima();
+                }
+            });
         });
-    });
 
-    // Funciones para mostrar y ocultar campos
-    function mostrarCamposLote() {
-        $('#campos_lote_fecha').show();
-        $('#campos_vencimiento').show();
-    }
+        // Funciones para mostrar y ocultar campos
+        function mostrarCamposLote() {
+            $('#campos_lote_fecha').show();
+            $('#campos_vencimiento').show();
+        }
 
-    function ocultarCamposLote() {
-        $('#campos_lote_fecha').hide();
-        $('#campos_vencimiento').hide();
-    }
+        function ocultarCamposLote() {
+            $('#campos_lote_fecha').hide();
+            $('#campos_vencimiento').hide();
+        }
 
-    function mostrarCamposInvima() {
-        $('#campos_invima').show();
-    }
+        function mostrarCamposInvima() {
+            $('#campos_invima').show();
+        }
 
-    function ocultarCamposInvima() {
-        $('#campos_invima').hide();
-    }
-</script>
-<script>
-    $(document).ready(function() {
-        $('#btn_agregar').click(function() {
-            agregarinsumo();
+        function ocultarCamposInvima() {
+            $('#campos_invima').hide();
+        }
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('#btn_agregar').click(function() {
+                agregarinsumo();
+            });
         });
-    });
 
-    let cont = 0;
-    let total = 0;
+        let cont = 0;
+        let total = 0;
 
-    function agregarinsumo() {
-        let id_insumo = $('#nombre').val();
-        let nameinsumo = $('#nombre option:selected').text();
-        let cantidad = parseInt($('#stock').val());
-        let lote = $('#lote').val();
-        let vencimiento = $('#vencimiento').val();
-        let invima = $('#invima').val();
+        function agregarinsumo() {
+            let id_insumo = $('#nombre').val();
+            let nameinsumo = $('#nombre option:selected').text();
+            let cantidad = parseInt($('#stock').val());
+            let lote = $('#lote').val();
+            let vencimiento = $('#vencimiento').val();
+            let invima = $('#invima').val();
 
             // && lote != ''  && vencimiento != ''  && invima != ''
             if (id_insumo != '' && nameinsumo != '' && cantidad != '') {
@@ -249,8 +249,8 @@
                         ')"><i class="fa fa-trash"></i></button></td>' +
                         '</tr>';
 
-                    $('#tabla_detalle').append(fila);
-                    limpiarCampo();
+                    $('#tabla_detalle tbody').prepend(fila);
+                    limpiarCampos();
                     cont++;
                     total += cantidad;
                     $('#total').html(total);
@@ -263,29 +263,24 @@
         }
 
 
-        function limpiarCampo() {
-            let select = $('#nombre');
-            select.selectpicker();
-            select.selectpicker('val', '');
+
+        function limpiarCampos() {
+            let selectNombre = $('#nombre');
+            let selectVariante = $('#variante');
+
+            selectNombre.selectpicker('val', ''); // Limpiar select de nombre
+            selectVariante.selectpicker('val', ''); // Limpiar select de variante
             $('#stock').val('');
+            $('#invima').val('');
             $('#lote').val('');
             $('#vencimiento').val('');
-            $('#invima').val('');
+
         }
 
         function eliminarInsumo(indice) {
-            let cantidadEliminada = parseInt($('#fila' + indice).find('td:eq(1)').text());
+            let cantidadEliminada = parseInt($('#fila' + indice).find('input[name="arraycantidad[]"]').val());
             total -= cantidadEliminada;
             $('#fila' + indice).remove();
-            $('#total').html(total);
-        }
-
-        function recalcularTotal() {
-            total = 0;
-            $('#tabla_detalle tbody tr').each(function() {
-                let cantidad = parseInt($(this).find('td:eq(1)').text());
-                total += cantidad;
-            });
             $('#total').html(total);
         }
 
@@ -347,4 +342,3 @@
     </script>
 
 @stop
-

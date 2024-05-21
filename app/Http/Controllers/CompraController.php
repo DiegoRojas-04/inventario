@@ -21,11 +21,26 @@ class CompraController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+
+    public function index(Request $request)
     {
-        $compras = Compra::with('comprobante')->where('estado', 1)->latest()->get();
+        $query = Compra::query();
+
+        // Verifica si se enviaron fechas en la solicitud
+        if ($request->filled('fecha_inicio') && $request->filled('fecha_fin')) {
+            // Convierte las fechas de texto en objetos Carbon para poder compararlas
+            $fechaInicio = Carbon::createFromFormat('Y-m-d', $request->input('fecha_inicio'))->startOfDay();
+            $fechaFin = Carbon::createFromFormat('Y-m-d', $request->input('fecha_fin'))->endOfDay();
+
+            // Filtra las compras dentro del rango de fechas seleccionado
+            $query->whereBetween('fecha_hora', [$fechaInicio, $fechaFin]);
+        }
+
+        $compras = $query->latest()->paginate(5);
+
         return view('crud.compra.index', compact('compras'));
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -42,70 +57,71 @@ class CompraController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(StoreCompraRequest $request)
-{
-    try {
-        DB::beginTransaction();
+    {
+        try {
+            DB::beginTransaction();
 
-        $compra = Compra::create($request->validated());
-        $arrayInsumo = $request->get('arrayidinsumo');
-        $arrayCantidad = $request->get('arraycantidad');
-        $arrayCaracteristicas = $request->get('arraycaracteristicas');
+            $compra = Compra::create($request->validated());
+            $arrayInsumo = $request->get('arrayidinsumo');
+            $arrayCantidad = $request->get('arraycantidad');
+            $arrayCaracteristicas = $request->get('arraycaracteristicas');
 
-        $size = count($arrayInsumo);
-        $cont = 0;
-        while ($cont < $size) {
-            // Verificar si el insumo requiere características adicionales
-            $insumo = Insumo::find($arrayInsumo[$cont]);
-            if (!$insumo->requiere_lote && !$insumo->requiere_invima) {
-                // Si no requiere características adicionales, agregar solo el stock
-                $compra->insumos()->attach($arrayInsumo[$cont], ['cantidad' => $arrayCantidad[$cont]]);
-                
-                // Actualizar el stock del insumo
-                $stockActual = $insumo->stock;
-                $stockNuevo = intval($arrayCantidad[$cont]);
-                $insumo->update(['stock' => $stockActual + $stockNuevo]);
-            } else {
-                // Si el insumo requiere características adicionales, agregar características
-                $compra->insumos()->syncWithoutDetaching([
-                    $arrayInsumo[$cont] => ['cantidad' => $arrayCantidad[$cont]]
-                ]);
+            $size = count($arrayInsumo);
+            $cont = 0;
+            while ($cont < $size) {
+                $insumo = Insumo::find($arrayInsumo[$cont]);
+                if (!$insumo->requiere_lote && !$insumo->requiere_invima) {
+                    $compra->insumos()->attach($arrayInsumo[$cont], ['cantidad' => $arrayCantidad[$cont]]);
+                    $insumo->update(['stock' => $insumo->stock + intval($arrayCantidad[$cont])]);
+                } else {
+                    $compra->insumos()->syncWithoutDetaching([
+                        $arrayInsumo[$cont] => ['cantidad' => $arrayCantidad[$cont]]
+                    ]);
+                    $insumo->update(['stock' => $insumo->stock + intval($arrayCantidad[$cont])]);
 
-                // Actualizar el stock del insumo
-                $stockActual = $insumo->stock;
-                $stockNuevo = intval($arrayCantidad[$cont]);
-                $insumo->update(['stock' => $stockActual + $stockNuevo]);
+                    $insumo->caracteristicas()->create([
+                        'invima' => $arrayCaracteristicas[$cont]['invima'],
+                        'lote' => $arrayCaracteristicas[$cont]['lote'],
+                        'vencimiento' => $arrayCaracteristicas[$cont]['vencimiento'],
+                        'cantidad' => $arrayCantidad[$cont],
+                        'compra_id' => $compra->id,  // Asegúrate de almacenar la compra_id aquí
+                    ]);
+                }
 
-                // Crear las características del insumo
-                $insumo->caracteristicas()->create([
-                    'invima' => $arrayCaracteristicas[$cont]['invima'],
-                    'lote' => $arrayCaracteristicas[$cont]['lote'],
-                    'vencimiento' => $arrayCaracteristicas[$cont]['vencimiento'],
-                    'cantidad' => $arrayCantidad[$cont],
-                ]);
+                $cont++;
             }
 
-            $cont++;
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
         }
 
-        DB::commit();
-    } catch (Exception $e) {
-        DB::rollBack();
+        return redirect('compra')->with('Mensaje', 'Compra');
     }
 
-    return redirect('compra')->with('Mensaje', 'Compra');
-}
 
     /**
      * Display the specified resource.
      */
 
-   public function show($id)
-{
-    $compra = Compra::findOrFail($id);
-    $insumosComprados = $compra->insumos;
+    public function show($id)
+    {
+        $compra = Compra::findOrFail($id);
 
-    return view('crud.compra.show', compact('compra', 'insumosComprados'));
-}
+        // Obtener los insumos con las características específicas de esa compra
+        $insumosConCaracteristicas = $compra->insumos->map(function ($insumo) use ($compra) {
+            $insumo->caracteristicasCompra = $insumo->caracteristicas()->where('compra_id', $compra->id)->get();
+            return $insumo;
+        });
+
+        return view('crud.compra.show', compact('compra', 'insumosConCaracteristicas'));
+    }
+
+
+
+
+
+
 
     /**
      * Show the form for editing the specified resource.

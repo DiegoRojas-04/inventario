@@ -34,46 +34,63 @@
 @section('content')
     <div class="card">
         <div class="card-header">
-            
+            <form action="{{ url('/entrega') }}" method="get">
+                <div class="form-row">
+                    <div class="col-md-7">
+
+                    </div>
+                    <div class="col-md-2">
+                        <input type="date" name="fecha_inicio" id="fecha_inicio" class="form-control">
+                    </div>
+                    <div class="col-md-2">
+                        <input type="date" name="fecha_fin" id="fecha_fin" class="form-control">
+                    </div>
+                    <div class="col-md-1">
+                        <button type="submit" class="btn btn-primary">Filtrar</button>
+                    </div>
+                </div>
+            </form>
         </div>
+
         <div class="card-body">
-
-            <table class="table">
-                <thead class="thead-dark">
-                    <tr class="text-center">
-                        <th>Entrega a</th>
-                        <th>Comprobante</th>
-                        <th>Numero Comprobante</th>
-                        <th>Fecha</th>
-                        <th>Hora</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody class="text-center">
-                    @foreach ($entregas as $item)
-                        <tr>
-                            <td>{{ $item->servicio->nombre}}</td>
-                            <td>{{ $item->comprobante->tipo_comprobante }}</td>
-                            <td>{{ $item->numero_comprobante }}</td>
-                            <td>{{\Carbon\Carbon::parse($item->fecha_hora)->format('d-m-Y')}}</td>
-                            <td>{{\Carbon\Carbon::parse($item->fecha_hora)->format('H:i:s')}}</td>
-                            <td>
-                                <div class="btn-group" role="group">
-                                    <form action="{{ route('entrega.show', ['entrega' => $item]) }}" method="get">
-                                        <button type="submit" class="btn btn-success"><i class="fa fa-eye"
-                                                aria-hidden="true"></i></button>
-                                    </form>
-                                </div>
-
-                                {{-- <div class="btn-group" role="group">
-                                    <button type="button" class="btn btn-danger">Eliminar</button>
-                                </div> --}}
-                            </td>
+            @if ($entregas->isEmpty())
+                <div class="alert alert text-center " role="alert">
+                    No hay Entregas en el rango de fechas seleccionadas
+                </div>
+            @else
+                <table class="table">
+                    <thead class="thead-dark">
+                        <tr class="text-center">
+                            <th>Entrega a</th>
+                            <th>Comprobante</th>
+                            <th>Numero Comprobante</th>
+                            <th>Fecha</th>
+                            <th>Hora</th>
+                            <th>Acciones</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
-            {{-- {{ $compras->links() }} --}}
+                    </thead>
+                    <tbody class="text-center">
+                        @foreach ($entregas as $item)
+                            <tr>
+                                <td>{{ $item->servicio->nombre }}</td>
+                                <td>{{ $item->comprobante->tipo_comprobante }}</td>
+                                <td>{{ $item->numero_comprobante }}</td>
+                                <td>{{ \Carbon\Carbon::parse($item->fecha_hora)->format('d-m-Y') }}</td>
+                                <td>{{ \Carbon\Carbon::parse($item->fecha_hora)->format('H:i:s') }}</td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <form action="{{ route('entrega.show', ['entrega' => $item]) }}" method="get">
+                                            <button type="submit" class="btn btn-success"><i class="fa fa-eye"
+                                                    aria-hidden="true"></i></button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+                {{ $entregas->appends(request()->query())->links() }}
+            @endif
         </div>
     </div>
 @stop

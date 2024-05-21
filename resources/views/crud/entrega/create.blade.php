@@ -22,9 +22,8 @@
 
                             <div class="col-md-12 mb-2">
                                 <label class="form-label">Insumos:</label>
-                                <select data-size="8" title="Seleccionar Insumos..." data-live-search="true"
-                                    name="nombre" id="nombre" data-style="btn-white"
-                                    class="form-control selectpicker show-tick">
+                                <select data-size="8" title="Seleccionar Insumos..." data-live-search="true" name="nombre"
+                                    id="nombre" data-style="btn-white" class="form-control selectpicker show-tick">
                                     @foreach ($insumos as $item)
                                         <option value="{{ $item->id }}">{{ $item->nombre }}</option>
                                     @endforeach
@@ -36,6 +35,7 @@
                                 <select data-size="10" title="Seleccionar Variante..." data-live-search="true"
                                     name="variante" id="variante" data-style="btn-white"
                                     class="form-control selectpicker show-tick">
+
                                 </select>
                             </div>
 
@@ -46,8 +46,7 @@
 
                             <div class="col-md-6 mb-2">
                                 <label class="form-label">Cantidad:</label>
-                                <input type="number" name="stock" id="stock" class="form-control"
-                                    placeholder="0">
+                                <input type="number" name="stock" id="stock" class="form-control" placeholder="0">
                             </div>
 
                             <div class="col-md-12 mb-2 mt-2 text-right">
@@ -61,8 +60,10 @@
                                             <tr>
                                                 <th>#</th>
                                                 <th>Insumo</th>
+                                                <th>Invima</th>
+                                                <th>Lote</th>
+                                                <th>F.Venc</th>
                                                 <th>Cantidad</th>
-                                                <th>Codigo</th>
                                                 <th><i class="fa fa-trash"></i></th>
                                             </tr>
                                         </thead>
@@ -104,9 +105,9 @@
                         <div class="row">
                             <div class="col-md-12 mb-2">
                                 <label for="" class="form-label">Entrega Para:</label>
-                                <select data-size="5" title="Entregar A:" data-live-search="true"
-                                    data-style="btn-white" name="servicio_id" id="servicio_id"
-                                    class="form-control selectpicker show-tick" required>
+                                <select data-size="5" title="Entregar A:" data-live-search="true" data-style="btn-white"
+                                    name="servicio_id" id="servicio_id" class="form-control selectpicker show-tick"
+                                    required>
                                     @foreach ($servicios as $item)
                                         <option value="{{ $item->id }}">{{ $item->nombre }}</option>
                                     @endforeach
@@ -144,9 +145,10 @@
                             <input type="hidden" name="user_id" value="2">
 
                             <div class="col-md-12 mb-2 text-center">
-                                <button type="button" class="btn btn-success" onclick="confirmAndSubmit()">Guardar</button>
+                                <button type="button" class="btn btn-success"
+                                    onclick="confirmAndSubmit()">Guardar</button>
                             </div>
-                            
+
                         </div>
                     </div>
                 </div>
@@ -159,8 +161,8 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 @stop
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<link
-    rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/css/bootstrap-select.min.css">
+<link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/css/bootstrap-select.min.css">
 @section('js')
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js"></script>
 
@@ -266,6 +268,10 @@
             let variante = $('#variante').val();
             let stockActual = parseInt($('#stock_actual').val());
 
+            // Capturar las características de la variante seleccionada
+            let varianteText = $('#variante option:selected').text();
+            let [invima, lote, vencimiento] = varianteText.split(' - ');
+
             // Verificar si el insumo tiene variantes disponibles
             let tieneVariantes = $('#variante').val() !== '';
             // Si el insumo tiene variantes, verificar que se haya seleccionado una variante
@@ -282,15 +288,21 @@
                             '<td><input type="hidden" name="arrayidinsumo[]" value="' + idInsumo + '">' +
                             nombreInsumo +
                             '</td>' +
-                            '<td><input type="hidden" name="arraycantidad[]" value="' + cantidad + '">' + cantidad +
+                            '<td><input type="hidden" name="arrayvariante[]" value="' + variante + '">' +
+                            '<input type="hidden" name="arrayinvima[]" value="' + invima + '">' + invima + // Agregado
                             '</td>' +
-                            '<td><input type="hidden" name="arrayvariante[]" value="' + variante + '">' + variante +
+                            '<td><input type="hidden" name="arraylote[]" value="' + lote + '">' + lote + // Agregado
+                            '</td>' +
+                            '<td><input type="hidden" name="arrayvencimiento[]" value="' + vencimiento + '">' +
+                            vencimiento + // Agregado
+                            '</td>' +
+                            '<td><input type="hidden" name="arraycantidad[]" value="' + cantidad + '">' + cantidad +
                             '</td>' +
                             '<td><button class="btn btn-danger" type="button" onClick="eliminarInsumo(' + cont +
                             ')"><i class="fa fa-trash"></i></button></td>' +
                             '</tr>';
 
-                        $('#tabla_detalle tbody').append(fila);
+                        $('#tabla_detalle tbody').prepend(fila);
                         limpiarCampos();
                         cont++;
                         total += cantidad;
@@ -305,6 +317,8 @@
                 showModal('Campos Obligatorios');
             }
         }
+
+
 
         function eliminarInsumo(indice) {
             let cantidadEliminada = parseInt($('#fila' + indice).find('input[name="arraycantidad[]"]').val());
@@ -366,7 +380,7 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         Swal.fire({
-                            title: 'Acción Exitosa',                         
+                            title: 'Acción Exitosa',
                             icon: 'success',
                             showConfirmButton: false,
                             timer: 5000
