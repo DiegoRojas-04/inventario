@@ -3,66 +3,68 @@
 @section('title', 'Insumo')
 
 @section('content_header')
-    <a href="{{ url('/insumo/create') }}" class="text-decoration-none text-white">
-        <button type="submit" class="btn btn-primary">Agregar Insumos</button>
-    </a>
+    @can('Crear Insumo')
+        <a href="{{ url('/insumo/create') }}" class="text-decoration-none text-white">
+            <button type="submit" class="btn btn-primary">Agregar Insumos</button>
+        </a>
+    @endcan
     @if (session('Mensaje'))
-    <script>
-        const Toast = Swal.mixin({
-            toast: true,
-            position: "top-end",
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-            didOpen: (toast) => {
-                toast.onmouseenter = Swal.stopTimer;
-                toast.onmouseleave = Swal.resumeTimer;
-            }
-        });
-        Toast.fire({
-            icon: "error",
-            title: "Insumo Eliminado"
-        });
-    </script>
-@endif
-@if (session('Mensaje3'))
-    <script>
-        const Toast = Swal.mixin({
-            toast: true,
-            position: "top-end",
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-            didOpen: (toast) => {
-                toast.onmouseenter = Swal.stopTimer;
-                toast.onmouseleave = Swal.resumeTimer;
-            }
-        });
-        Toast.fire({
-            icon: "success",
-            title: "Insumo Restaurado"
-        });
-    </script>
-@endif
-@if (session('Mensaje2'))
-    <script>
-        const Toast = Swal.mixin({
-            toast: true,
-            position: "top-end",
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-            didOpen: (toast) => {
-                toast.onmouseenter = Swal.stopTimer;
-                toast.onmouseleave = Swal.resumeTimer;
-            }
-        });
-        Toast.fire({
-            icon: "success",
-            title: "Insumo Actualizado"
-        });
-    </script>
-@endif
+        <script>
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "top-end",
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                }
+            });
+            Toast.fire({
+                icon: "error",
+                title: "Insumo Eliminado"
+            });
+        </script>
+    @endif
+    @if (session('Mensaje3'))
+        <script>
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "top-end",
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                }
+            });
+            Toast.fire({
+                icon: "success",
+                title: "Insumo Restaurado"
+            });
+        </script>
+    @endif
+    @if (session('Mensaje2'))
+        <script>
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "top-end",
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                }
+            });
+            Toast.fire({
+                icon: "success",
+                title: "Insumo Actualizado"
+            });
+        </script>
+    @endif
 
     <br>
 @stop
@@ -104,8 +106,8 @@
                         <input type="text" class="form-control" placeholder="Buscar" id="search" name="search"
                             value="{{ request('search') }}">
                         <div class="input-group-prepend">
-                            <button type="submit" class="btn" aria-disabled="true"
-                                style="pointer-events: none;"><i class="fas fa-search"></i></button>
+                            <button type="submit" class="btn" aria-disabled="true" style="pointer-events: none;"><i
+                                    class="fas fa-search"></i></button>
                         </div>
                     </div>
                 </div>
@@ -128,7 +130,7 @@
                 <tbody class="text-center">
                     @foreach ($insumos as $insumo)
                         <tr>
-                            <td >{{ $insumo->nombre }}</td>
+                            <td>{{ $insumo->nombre }}</td>
                             <td>{{ $insumo->marca->nombre }}</td>
                             <td>{{ $insumo->presentacione->nombre }}</td>
                             <td>{{ $insumo->vida_util }}</td>
@@ -141,36 +143,39 @@
                                             aria-hidden="true"></i>
                                     </button>
                                 </div>
-                                <div class="btn-group" role="group">
-                                    <a href="{{ url('/insumo/' . $insumo->id . '/edit') }}"
-                                        class="text-decoration-none text-white">
-                                        <button type="submit" class="btn btn-warning"><i class="fa fa-file"
-                                                aria-hidden="true"></i></button></a>
-                                </div>
-
-                                <div class="btn-group" role="group">
-                                    @if ($insumo->estado == 1)
-                                        <form id="delete-form-{{ $insumo->id }}"
-                                            action="{{ url('/insumo/' . $insumo->id) }}" method="POST">
-                                            {{ csrf_field() }}
-                                            {{ method_field('DELETE') }}
-                                            <button type="button" class="btn btn-danger"
-                                                onclick="confirmDelete({{ $insumo->id }})">
-                                                <i class="fa fa-trash" aria-hidden="true"></i>
-                                            </button>
-                                        </form>
-                                    @else
-                                        <form id="delete-form-{{ $insumo->id }}"
-                                            action="{{ url('/insumo/' . $insumo->id) }}" method="POST">
-                                            {{ csrf_field() }}
-                                            {{ method_field('DELETE') }}
-                                            <button type="button" class="btn btn-success"
-                                                onclick="confirmDelete({{ $insumo->id }})">
-                                                <i class="fa fa-share" aria-hidden="true"></i>
-                                            </button>
-                                        </form>
-                                    @endif
-                                </div>
+                                @can('Editar Insumo')
+                                    <div class="btn-group" role="group">
+                                        <a href="{{ url('/insumo/' . $insumo->id . '/edit') }}"
+                                            class="text-decoration-none text-white">
+                                            <button type="submit" class="btn btn-warning"><i class="fa fa-file"
+                                                    aria-hidden="true"></i></button></a>
+                                    </div>
+                                @endcan
+                                @can('Editar Insumo')
+                                    <div class="btn-group" role="group">
+                                        @if ($insumo->estado == 1)
+                                            <form id="delete-form-{{ $insumo->id }}"
+                                                action="{{ url('/insumo/' . $insumo->id) }}" method="POST">
+                                                {{ csrf_field() }}
+                                                {{ method_field('DELETE') }}
+                                                <button type="button" class="btn btn-danger"
+                                                    onclick="confirmDelete({{ $insumo->id }})">
+                                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                                </button>
+                                            </form>
+                                        @else
+                                            <form id="delete-form-{{ $insumo->id }}"
+                                                action="{{ url('/insumo/' . $insumo->id) }}" method="POST">
+                                                {{ csrf_field() }}
+                                                {{ method_field('DELETE') }}
+                                                <button type="button" class="btn btn-success"
+                                                    onclick="confirmDelete({{ $insumo->id }})">
+                                                    <i class="fa fa-share" aria-hidden="true"></i>
+                                                </button>
+                                            </form>
+                                        @endif
+                                    </div>
+                                @endcan
                             </td>
                         </tr>
                     @endforeach
@@ -277,7 +282,7 @@
             // Escuchar cambios en el select de categoría
             selectCategoria.addEventListener('change', function() {
                 document.getElementById('filterForm')
-            .submit(); // Enviar el formulario al cambiar la categoría
+                    .submit(); // Enviar el formulario al cambiar la categoría
             });
 
             const selectPageSize = document.getElementById('pageSize');

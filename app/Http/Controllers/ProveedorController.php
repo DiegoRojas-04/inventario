@@ -20,8 +20,6 @@ class ProveedorController extends Controller
     
         return view('crud.proveedor.index', compact('proveedores'));
     }
-    
-
     /**
      * Show the form for creating a new resource.
      */
@@ -29,7 +27,6 @@ class ProveedorController extends Controller
     {
         return view('crud.proveedor.create');
     }
-
     /**
      * Store a newly created resource in storage.
      */
@@ -39,7 +36,6 @@ class ProveedorController extends Controller
         Proveedore::insert($datosProveedor);
         return redirect('proveedor/create')->with('Mensaje', 'Proveedor Agregado Correctamente');
     }
-
     /**
      * Display the specified resource.
      */
@@ -47,7 +43,6 @@ class ProveedorController extends Controller
     {
         //
     }
-
     /**
      * Show the form for editing the specified resource.
      */
@@ -56,7 +51,6 @@ class ProveedorController extends Controller
         $proveedor = Proveedore::findOrFail($id);
         return view('crud.proveedor.edit', compact('proveedor'));
     }
-
     /**
      * Update the specified resource in storage.
      */
@@ -70,7 +64,6 @@ class ProveedorController extends Controller
         Proveedore::where('id', $id)->update($datosProveedor);
         return redirect('proveedor')->with('Mensaje2', 'Proveedor');
     }
-
     /**
      * Remove the specified resource from storage.
      */

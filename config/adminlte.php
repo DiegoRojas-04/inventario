@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Blade;
+
 return [
 
     /*
@@ -310,21 +312,54 @@ return [
             'type' => 'sidebar-menu-search',
             'text' => 'search',
         ],
+
         [
             'text' => 'blog',
             'url' => 'admin/blog',
             'can' => 'manage-blog',
         ],
+
         [
             'text' => 'Dashboard',
             'url' => 'dashboard',
             'icon' => 'far fa fa-table',
         ],
 
+        ['header' => 'Administracion',
+            'can' => 'Administrador',
+        ],
+        
+        [
+            'text' => 'Usuarios',
+            'url' => 'usuario',
+            'icon' => 'far fa fa-users',
+            'can' => 'Administrador'
+        ],
+
+        [
+            'text' => 'Permisos',
+            'url' => 'permiso',
+            'icon' => 'far fa fa-cog',
+            'can' => 'Administrador'
+        ],
+
+        [
+            'text' => 'Roles',
+            'url' => 'rol',
+            'icon' => 'far fa fa-address-card',
+            'can' => 'Administrador'
+        ],
+
+        ['header' => 'Gestion',
+        'can' => 'Administrador',
+    ],
+
         [
             'text' => 'Proveedores',
             'url' => 'proveedor',
             'icon' => 'far fa-user-circle',
+            'can' => 'Administrador',
+
             'submenu' => [
                 [
                     'text' => 'Proveedor',
@@ -342,6 +377,8 @@ return [
             'text' => 'Servicios',
             'url' => 'servicio',
             'icon' => 'far fa fa-medkit',
+            'can' => 'Administrador',
+
             'submenu' => [
                 [
                     'text' => 'Servicio',
@@ -359,6 +396,8 @@ return [
             'text' => 'Categorias',
             'url' => 'admin/pages',
             'icon' => 'far fa fa-list',
+            'can' => 'Administrador',
+
             'submenu' => [
                 [
                     'text' => 'Categoria',
@@ -372,11 +411,12 @@ return [
 
         ],
 
-        
         [
             'text' => 'Marcas',
             'url' => '',
             'icon' => 'far fa fa-book',
+            'can' => 'Administrador',
+
             'submenu' => [
                 [
                     'text' => 'Marca',
@@ -394,6 +434,8 @@ return [
             'text' => 'Presentaciones',
             'url' => '',
             'icon' => 'far fa fa-archive',
+            'can' => 'Administrador',
+
             'submenu' => [
                 [
                     'text' => 'Presentacion',
@@ -411,6 +453,8 @@ return [
             'text' => 'Insumos',
             'url' => 'insumo',
             'icon' => 'far fa fa-stethoscope',
+            'can' => 'Administrador',
+
             'submenu' => [
                 [
                     'text' => 'Insumo',
@@ -424,12 +468,15 @@ return [
 
         ],
 
-        ['header' => 'Acciones'],
+        ['header' => 'Acciones',
+        'can' => 'Administrador',
+    ],
 
        [
             'text' => 'Compras',
             'url' => 'compra',
             'icon' => 'far fa fa-shopping-cart',
+            'can' => 'Administrador',
             'submenu' => [
                 [
                     'text' => 'Compra',
@@ -447,6 +494,7 @@ return [
             'text' => 'Entregas',
             'url' => 'entrega',
             'icon' => 'far fa fa-cart-arrow-down',
+            'can' => 'Administrador',
             'submenu' => [
                 [
                     'text' => 'Entrega',
@@ -460,14 +508,35 @@ return [
 
         ], 
 
-
-        ['header' => 'account_settings'],
+        ['header' => 'account_settings',
+        'can' => 'Administrador',
+        ]
+        ,
         [
             'text' => 'profile',
             'url' => 'perfil',
             'icon' => 'fas fa-fw fa-user',
+            'can' => 'Administrador',
             
         ],
+
+        [
+            'text' => 'Pedido',
+            'url' => 'entrega',
+            'icon' => 'far fa fa-cart-arrow-down',
+            'submenu' => [
+                [
+                    'text' => 'Entrega',
+                    'url' => 'entrega',
+                ],
+                [
+                    'text' => 'Realizar Entrega',
+                    'url' => 'entrega/create',
+                ],
+            ],
+
+        ], 
+
         // [
         //     'text' => 'change_password',
         //     'url' => 'admin/settings',

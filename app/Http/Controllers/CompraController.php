@@ -70,10 +70,22 @@ class CompraController extends Controller
             $cont = 0;
             while ($cont < $size) {
                 $insumo = Insumo::find($arrayInsumo[$cont]);
-                if (!$insumo->requiere_lote && !$insumo->requiere_invima) {
+
+                // Verificar si el insumo tiene al menos una característica
+                $tieneCaracteristicas = false;
+                foreach ($arrayCaracteristicas[$cont] as $caracteristica) {
+                    if (!empty($caracteristica)) {
+                        $tieneCaracteristicas = true;
+                        break;
+                    }
+                }
+
+                if (!$tieneCaracteristicas) {
+                    // Si el insumo no tiene características, se crea la relación sin características
                     $compra->insumos()->attach($arrayInsumo[$cont], ['cantidad' => $arrayCantidad[$cont]]);
                     $insumo->update(['stock' => $insumo->stock + intval($arrayCantidad[$cont])]);
                 } else {
+                    // Si el insumo tiene al menos una característica, se crea la relación con características
                     $compra->insumos()->syncWithoutDetaching([
                         $arrayInsumo[$cont] => ['cantidad' => $arrayCantidad[$cont]]
                     ]);
@@ -84,7 +96,8 @@ class CompraController extends Controller
                         'lote' => $arrayCaracteristicas[$cont]['lote'],
                         'vencimiento' => $arrayCaracteristicas[$cont]['vencimiento'],
                         'cantidad' => $arrayCantidad[$cont],
-                        'compra_id' => $compra->id,  // Asegúrate de almacenar la compra_id aquí
+                        'cantidad_compra' => $arrayCantidad[$cont],
+                        'compra_id' => $compra->id,
                     ]);
                 }
 
@@ -117,15 +130,10 @@ class CompraController extends Controller
         return view('crud.compra.show', compact('compra', 'insumosConCaracteristicas'));
     }
 
-
-
-
-
-
-
     /**
      * Show the form for editing the specified resource.
      */
+    
     public function edit(string $id)
     {
         //
@@ -134,6 +142,7 @@ class CompraController extends Controller
     /**
      * Update the specified resource in storage.
      */
+
     public function update(Request $request, string $id)
     {
         //
@@ -142,6 +151,7 @@ class CompraController extends Controller
     /**
      * Remove the specified resource from storage.
      */
+    
     public function destroy(string $id)
     {
         //

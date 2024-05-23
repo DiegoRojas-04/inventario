@@ -231,7 +231,27 @@
             let vencimiento = $('#vencimiento').val();
             let invima = $('#invima').val();
 
-            // && lote != ''  && vencimiento != ''  && invima != ''
+            // Verificar si todos los campos lote, vencimiento e invima están vacíos
+            // Si están vacíos, asignarles los valores 'NR' y '0001-01-01' respectivamente
+            if (lote.trim() === '' && vencimiento.trim() === '' && invima.trim() === '') {
+                lote = 'NR';
+                vencimiento = '0001-01-01';
+                invima = 'NR';
+            } else {
+                // Verificar y asignar valores predeterminados para cada campo individualmente
+                if (lote.trim() === '') {
+                    lote = 'NR';
+                }
+
+                if (vencimiento.trim() === '') {
+                    vencimiento = '0001-01-01';
+                }
+
+                if (invima.trim() === '') {
+                    invima = 'NR';
+                }
+            }
+
             if (id_insumo != '' && nameinsumo != '' && cantidad != '') {
                 if (cantidad > 0 && (cantidad % 1 == 0)) {
                     let fila = '<tr id="fila' + cont + '">' +

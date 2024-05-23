@@ -69,7 +69,7 @@
 
             <div class="card mb-4">
                 <div class="card-header text-center">
-                    <h5> Detalle de Compra</h5>
+                    <h5>Detalle de Compra</h5>
                 </div>
                 <div class="card-body table-responsive">
                     <table class="table table-striped text-center">
@@ -77,7 +77,7 @@
                             <tr class="text-center">
                                 <th>Producto</th>
                                 <th>Marca</th>
-                                <th>Presentacion</th>
+                                <th>Presentación</th>
                                 <th>Invima</th>
                                 <th>Lote</th>
                                 <th>Vencimiento</th>
@@ -94,14 +94,14 @@
                                         <td>{{ $caracteristica->invima }}</td>
                                         <td>{{ $caracteristica->lote }}</td>
                                         <td>{{ $caracteristica->vencimiento }}</td>
-                                        <td>{{ $caracteristica->cantidad }}</td>
+                                        <td>{{ $caracteristica->cantidad_compra }}</td>
                                     </tr>
-                                @endforeach
+                                @endforeach 
                             @endforeach
                         </tbody>
-                    </table>                 
+                    </table>
                 </div>
-            </div>
+            </div> 
         </div>
     @stop
 

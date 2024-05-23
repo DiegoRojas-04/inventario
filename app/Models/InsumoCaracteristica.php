@@ -16,6 +16,7 @@ class InsumoCaracteristica extends Model
         'lote',
         'vencimiento',
         'cantidad',
+        'cantidad_compra',
     ];
 
     public function insumo()

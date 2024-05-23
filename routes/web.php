@@ -10,10 +10,13 @@ use App\Http\Controllers\InsumoController;
 use App\Http\Controllers\MarcaController;
 use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\PerfilController;
+use App\Http\Controllers\PermisoController;
 use App\Http\Controllers\PresentacionController;
 use App\Http\Controllers\ProveedorController;
+use App\Http\Controllers\RolController;
 use App\Http\Controllers\ServicioController;
 use App\Http\Controllers\StockController;
+use App\Http\Controllers\UsuarioController;
 use Faker\Guesser\Name;
 use Illuminate\Support\Facades\Route;
 use JeroenNoten\LaravelAdminLte\View\Components\Widget\ProfileColItem;
@@ -32,6 +35,14 @@ Route::resource('entrega', EntregaController::class);
 Route::resource('proveedor', ProveedorController::class);
 Route::resource('compra', CompraController::class);
 Route::resource('perfil', PerfilController::class);
+Route::resource('usuario', UsuarioController::class);
+Route::resource('rol', RolController::class);
+Route::resource('permiso', PermisoController::class);
+
+
+
+
+
 Route::get('/insumo/search', [InsumoController::class, 'search'])->name('insumo.search');
 Route::get('/get-stock', [EntregaController::class, 'getStock'])->name('get-stock');
 Route::get('/get-caracteristicas', [EntregaController::class, 'getCaracteristicas']);
