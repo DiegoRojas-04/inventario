@@ -151,7 +151,7 @@
                                                     aria-hidden="true"></i></button></a>
                                     </div>
                                 @endcan
-                                @can('Editar Insumo')
+                                @can('Eliminar Insumo')
                                     <div class="btn-group" role="group">
                                         @if ($insumo->estado == 1)
                                             <form id="delete-form-{{ $insumo->id }}"
@@ -222,13 +222,15 @@
                                                 </td>
                                                 <td>{{ $caracteristica->cantidad }}</td>
                                                 <td>
-                                                    <div class="btn-group" role="group">
-                                                        <a href="{{ url('/insumo/' . $insumo->id . '/caracteristica/' . $caracteristica->id . '/edit') }}"
-                                                            class="text-decoration-none text-white">
-                                                            <button type="submit" class="btn btn-warning"><i
-                                                                    class="fa fa-file"
-                                                                    aria-hidden="true"></i></button></a>
-                                                    </div>
+                                                    @can('Editar Insumo')
+                                                        <div class="btn-group" role="group">
+                                                            <a href="{{ url('/insumo/' . $insumo->id . '/caracteristica/' . $caracteristica->id . '/edit') }}"
+                                                                class="text-decoration-none text-white">
+                                                                <button type="submit" class="btn btn-warning"><i
+                                                                        class="fa fa-file"
+                                                                        aria-hidden="true"></i></button></a>
+                                                        </div>
+                                                    @endcan
                                                 </td>
                                             </tr>
                                         @endif

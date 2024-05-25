@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Spatie\Permission\Models\Permission;
 
 class PermisoController extends Controller
@@ -30,6 +31,7 @@ class PermisoController extends Controller
     public function store(Request $request)
     {
         $permission = Permission::create(['name' => $request->input('nombre')]);
+        Cache::flush();
         return back();
     }
 

@@ -7,6 +7,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EntregaController;
 use App\Http\Controllers\InsumoCaracteristicaController;
 use App\Http\Controllers\InsumoController;
+use App\Http\Controllers\KardexController;
 use App\Http\Controllers\MarcaController;
 use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\PerfilController;
@@ -38,6 +39,7 @@ Route::resource('perfil', PerfilController::class);
 Route::resource('usuario', UsuarioController::class);
 Route::resource('rol', RolController::class);
 Route::resource('permiso', PermisoController::class);
+Route::resource('kardex', KardexController::class);
 
 
 

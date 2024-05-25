@@ -8,6 +8,7 @@ use App\Models\Compra;
 use App\Models\Comprobante;
 use App\Models\Insumo;
 use App\Models\InsumoCaracteristica;
+use App\Models\Kardex;
 use App\Models\Presentacione;
 use App\Models\Proveedore;
 use App\Models\Servicio;
@@ -15,6 +16,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class CompraController extends Controller
 {
@@ -101,16 +103,57 @@ class CompraController extends Controller
                     ]);
                 }
 
+                // Agregar entrada al kardex
+                $this->agregarEntradaKardex($insumo->id, $request->input('fecha'), intval($arrayCantidad[$cont]));
+
                 $cont++;
             }
 
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
+            Log::error('Ocurrió un error al procesar la solicitud: ' . $e->getMessage());
+            return redirect()->back()->withErrors(['error' => 'Ocurrió un error al procesar la solicitud.']);
         }
 
-        return redirect('compra')->with('Mensaje', 'Compra');
+        return redirect('compra')->with('Mensaje', 'Compra registrada con éxito.');
     }
+
+    /**
+     * Agregar una entrada al Kardex para un insumo específico.
+     */
+    private function agregarEntradaKardex($insumoId, $fecha, $cantidad)
+    {
+        $fechaCompra = Carbon::createFromFormat('Y-m-d', $fecha);
+        $mesCompra = $fechaCompra->month;
+        $annoCompra = $fechaCompra->year;
+
+        // Verificar si ya existe un registro para este mes
+        $registroExistente = Kardex::where('insumo_id', $insumoId)
+            ->where('mes', $mesCompra)
+            ->where('anno', $annoCompra)
+            ->first();
+
+        if ($registroExistente) {
+            // Si existe, simplemente agrega una nueva entrada
+            $registroExistente->ingresos += $cantidad;
+            $registroExistente->saldo += $cantidad;
+            $registroExistente->save();
+        } else {
+            // Si no existe, crea un nuevo registro
+            Kardex::create([
+                'insumo_id' => $insumoId,
+                'mes' => $mesCompra,
+                'anno' => $annoCompra,
+                'cantidad_inicial' => 0, // Debes ajustar esto según tu lógica
+                'ingresos' => $cantidad,
+                'saldo' => $cantidad,
+                // Otros campos del Kardex
+            ]);
+        }
+    }
+
+
 
 
     /**
@@ -133,7 +176,7 @@ class CompraController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    
+
     public function edit(string $id)
     {
         //
@@ -151,7 +194,7 @@ class CompraController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    
+
     public function destroy(string $id)
     {
         //

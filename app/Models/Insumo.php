@@ -23,6 +23,28 @@ class Insumo extends Model
         'estado'
     ];
 
+    public function ingresosDelMes($mes, $anno)
+    {
+        return $this->kardex()
+                    ->where('mes', $mes)
+                    ->where('anno', $anno)
+                    ->sum('ingresos');
+    }
+
+    public function egresosDelMes($mes, $anno)
+    {
+        return $this->kardex()
+                    ->where('mes', $mes)
+                    ->where('anno', $anno)
+                    ->sum('egresos');
+    }
+
+    public function kardex()
+    {
+        return $this->hasMany(Kardex::class);
+    }
+
+    
     public function compras()
     {
         return $this->belongsToMany(Compra::class)->withTimestamps()->withPivot('cantidad');
@@ -54,5 +76,8 @@ class Insumo extends Model
     {
         return $this->hasMany(InsumoCaracteristica::class, 'insumo_id');
     }
-  
+    public function detallesTransaccion()
+    {
+        return $this->hasMany(DetalleTransaccion::class, 'insumo_id');
+    }
 }

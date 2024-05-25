@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Spatie\Permission\Models\Role;
 
 class UsuarioController extends Controller
@@ -53,6 +54,7 @@ class UsuarioController extends Controller
     {
         $user = User::find($id);
         $roles = Role::all();
+        Cache::flush();
         return view('admin.userRol',compact('user','roles'));
     }
 
@@ -63,6 +65,7 @@ class UsuarioController extends Controller
     {
         $user = User::find($id);
         $user->roles()->sync($request->roles);
+        Cache::flush();
         return redirect()->back();
     }
 

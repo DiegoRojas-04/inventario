@@ -6,8 +6,10 @@ use App\Http\Requests\StoreInsumoRequest;
 use App\Models\Caracteristica;
 use App\Models\Categoria;
 use App\Models\Insumo;
+use App\Models\Kardex;
 use App\Models\Marca;
 use App\Models\Presentacione;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class InsumoController extends Controller
@@ -51,10 +53,30 @@ class InsumoController extends Controller
      */
     public function store(StoreInsumoRequest $request)
     {
+        // Lógica para crear un nuevo insumo
         $datosInsumo = request()->except('_token');
         Insumo::insert($datosInsumo);
+    
+        // Obtener el ID del nuevo insumo creado
+        $nuevoInsumoId = Insumo::latest()->first()->id;
+    
+        // Crear registros de Kardex para cada mes
+        $mesActual = Carbon::now()->month;
+        $annoActual = Carbon::now()->year;
+    
+        // Loop a través de los meses que deseas seguir
+        for ($mes = 1; $mes <= 12; $mes++) {
+            Kardex::create([
+                'insumo_id' => $nuevoInsumoId,
+                'mes' => $mes,
+                'anno' => $annoActual,
+                // Otros campos del Kardex
+            ]);
+        }
+    
         return redirect('insumo/create')->with('Mensaje', 'Insumo');
     }
+    
 
     /**
      * Display the specified resource.

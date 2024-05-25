@@ -25,7 +25,7 @@
     <a href="{{ url('/proveedor') }}" class="text-decoration-none text-white">
         <button type="submit" class="btn btn-primary ">Proveedores</button></a>
 @stop
-
+{{--  --}}
 @section('content')
     <div class="card">
         <div class="card-header">

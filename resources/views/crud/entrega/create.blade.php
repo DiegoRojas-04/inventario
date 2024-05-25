@@ -142,8 +142,8 @@
                                 <input type="hidden" name="fecha_hora" value="{{ $fecha_hora }}">
                             </div>
 
-                            <input type="hidden" name="user_id" value="2">
-
+                            <input type="hidden" name="user_id" value="{{ auth()->id() }}">
+                            
                             <div class="col-md-12 mb-2 text-center">
                                 <button type="button" class="btn btn-success"
                                     onclick="confirmAndSubmit()">Guardar</button>

@@ -326,39 +326,39 @@ return [
         ],
 
         ['header' => 'Administracion',
-            'can' => 'Administrador',
+            'can' => 'Administrador Configuracion',
         ],
         
         [
             'text' => 'Usuarios',
             'url' => 'usuario',
             'icon' => 'far fa fa-users',
-            'can' => 'Administrador'
+            'can' => 'Administrador Configuracion'
         ],
 
         [
             'text' => 'Permisos',
             'url' => 'permiso',
             'icon' => 'far fa fa-cog',
-            'can' => 'Administrador'
+            'can' => 'Administrador Configuracion'
         ],
 
         [
             'text' => 'Roles',
             'url' => 'rol',
             'icon' => 'far fa fa-address-card',
-            'can' => 'Administrador'
+            'can' => 'Administrador Configuracion'
         ],
 
         ['header' => 'Gestion',
-        'can' => 'Administrador',
+        // 'can' => 'Administrador',
     ],
 
         [
             'text' => 'Proveedores',
             'url' => 'proveedor',
             'icon' => 'far fa-user-circle',
-            'can' => 'Administrador',
+            'can' => 'Proveedores',
 
             'submenu' => [
                 [
@@ -377,7 +377,7 @@ return [
             'text' => 'Servicios',
             'url' => 'servicio',
             'icon' => 'far fa fa-medkit',
-            'can' => 'Administrador',
+            'can' => 'Servicios',
 
             'submenu' => [
                 [
@@ -396,7 +396,7 @@ return [
             'text' => 'Categorias',
             'url' => 'admin/pages',
             'icon' => 'far fa fa-list',
-            'can' => 'Administrador',
+            'can' => 'Categorias',
 
             'submenu' => [
                 [
@@ -414,8 +414,8 @@ return [
         [
             'text' => 'Marcas',
             'url' => '',
-            'icon' => 'far fa fa-book',
-            'can' => 'Administrador',
+            'icon' => 'far fa fa-tags',
+            'can' => 'Marcas',
 
             'submenu' => [
                 [
@@ -433,8 +433,8 @@ return [
         [
             'text' => 'Presentaciones',
             'url' => '',
-            'icon' => 'far fa fa-archive',
-            'can' => 'Administrador',
+            'icon' => 'far fa fa-cubes',
+            'can' => 'Presentaciones',
 
             'submenu' => [
                 [
@@ -453,7 +453,7 @@ return [
             'text' => 'Insumos',
             'url' => 'insumo',
             'icon' => 'far fa fa-stethoscope',
-            'can' => 'Administrador',
+            'can' => 'Insumos',
 
             'submenu' => [
                 [
@@ -463,9 +463,16 @@ return [
                 [
                     'text' => 'Crear Insumo',
                     'url' => 'insumo/create',
+                    'can' => 'Crear Insumo',
                 ],
             ],
 
+        ],
+
+        [
+            'text' => 'Kardex',
+            'url' => 'kardex',
+            'icon' => 'far fa fa-book',
         ],
 
         ['header' => 'Acciones',
@@ -476,7 +483,7 @@ return [
             'text' => 'Compras',
             'url' => 'compra',
             'icon' => 'far fa fa-shopping-cart',
-            'can' => 'Administrador',
+            'can' => 'Compras',
             'submenu' => [
                 [
                     'text' => 'Compra',
@@ -494,7 +501,7 @@ return [
             'text' => 'Entregas',
             'url' => 'entrega',
             'icon' => 'far fa fa-cart-arrow-down',
-            'can' => 'Administrador',
+            'can' => 'Entregas',
             'submenu' => [
                 [
                     'text' => 'Entrega',
@@ -520,22 +527,22 @@ return [
             
         ],
 
-        [
-            'text' => 'Pedido',
-            'url' => 'entrega',
-            'icon' => 'far fa fa-cart-arrow-down',
-            'submenu' => [
-                [
-                    'text' => 'Entrega',
-                    'url' => 'entrega',
-                ],
-                [
-                    'text' => 'Realizar Entrega',
-                    'url' => 'entrega/create',
-                ],
-            ],
+        // [
+        //     'text' => 'Pedido',
+        //     'url' => 'entrega',
+        //     'icon' => 'far fa fa-cart-arrow-down',
+        //     'submenu' => [
+        //         [
+        //             'text' => 'Entrega',
+        //             'url' => 'entrega',
+        //         ],
+        //         [
+        //             'text' => 'Realizar Entrega',
+        //             'url' => 'entrega/create',
+        //         ],
+        //     ],
 
-        ], 
+        // ], 
 
         // [
         //     'text' => 'change_password',

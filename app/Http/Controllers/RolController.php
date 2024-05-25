@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -31,6 +32,7 @@ class RolController extends Controller
     public function store(Request $request)
     {
         $role = Role::create(['name' => $request->input('nombre')]);
+        Cache::flush();
         return back();
     }
 
@@ -49,6 +51,7 @@ class RolController extends Controller
     {
         $role = Role::find($id);
         $permisos = Permission::all();
+        Cache::flush();
         return view('admin.rolePermiso', compact('role', 'permisos'));
     }
 
@@ -59,6 +62,7 @@ class RolController extends Controller
     {
         $role = Role::find($id);
         $role->permissions()->sync($request->input('permissions'));
+        Cache::flush();
         return redirect()->back();
     }
     

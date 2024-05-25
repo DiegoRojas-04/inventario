@@ -20,18 +20,20 @@
                 <div class="form-group">
                     <label>Lista de Permisos</label>
                     <div class="row">
-                        <div class="col-md-12">
-                            @foreach ($permisos as $permiso)
-                                <div class="form-check mb-3">
-                                    <input type="checkbox" name="permissions[]" value="{{ $permiso->id }}"
-                                        class="form-check-input" id="perm_{{ $permiso->id }}"
-                                        {{ $role->hasPermissionTo($permiso->name) ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="perm_{{ $permiso->id }}">
-                                        {{ $permiso->name }}
-                                    </label>
-                                </div>
-                            @endforeach
-                        </div>
+                        @foreach ($permisos->chunk(ceil($permisos->count() / 4)) as $chunk)
+                            <div class="col-md-3">
+                                @foreach ($chunk as $permiso)
+                                    <div class="form-check mb-3">
+                                        <input type="checkbox" name="permissions[]" value="{{ $permiso->id }}"
+                                            class="form-check-input" id="perm_{{ $permiso->id }}"
+                                            {{ $role->hasPermissionTo($permiso->name) ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="perm_{{ $permiso->id }}">
+                                            {{ $permiso->name }}
+                                        </label>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endforeach
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary">Save Changes</button>
