@@ -12,38 +12,39 @@ class KardexController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
-    {
-        // Obtener el mes y el año seleccionados en el formulario
-        $selectedMonth = $request->input('mes', date('n'));
-        $selectedYear = $request->input('anno', date('Y'));
-        // Obtener los insumos
-        $query = Insumo::query();
-        $insumos = $query->with('detallesTransaccion')->get();
-        // Filtrar por categoría si se selecciona una
-        if ($request->has('id_categoria')) {
-            $idCategoria = $request->input('id_categoria');
-            // Filtrar solo si se selecciona una categoría específica
-            if ($idCategoria != "") {
-                $query->where('id_categoria', $idCategoria);
-            }
+   public function index(Request $request)
+{
+    // Obtener el mes y el año seleccionados en el formulario
+    $selectedMonth = $request->input('mes', date('n'));
+    $selectedYear = $request->input('anno', date('Y'));
+
+    // Obtener todas las categorías
+    $categorias = Categoria::all();
+
+    // Obtener los insumos
+    $insumos = Insumo::with('detallesTransaccion', 'compras', 'entregas')->get();
+
+    // Filtrar por categoría si se selecciona una
+    if ($request->has('id_categoria')) {
+        $idCategoria = $request->input('id_categoria');
+        // Filtrar solo si se selecciona una categoría específica
+        if ($idCategoria != "") {
+            $insumos = $insumos->where('id_categoria', $idCategoria);
         }
-
-        // Obtener los insumos y calcular sus datos del Kardex
-        $insumos = $query->get()->map(function ($insumo) use ($selectedMonth, $selectedYear) {
-            $insumo->cantidad_inicial_mes = $this->calcularCantidadInicialMes($insumo, $selectedMonth, $selectedYear);
-            $insumo->ingresos_mes = $insumo->ingresosDelMes($selectedMonth, $selectedYear);
-            $insumo->egresos_mes = $insumo->egresosDelMes($selectedMonth, $selectedYear);
-            $insumo->saldo_final_mes = $insumo->cantidad_inicial_mes + $insumo->ingresos_mes - $insumo->egresos_mes;
-            return $insumo;
-        });
-
-        $categorias = Categoria::all();
-
-        // Pasar los datos a la vista
-        return view('crud.kardex', compact('insumos', 'selectedMonth', 'selectedYear', 'categorias'));
     }
 
+    // Obtener los insumos y calcular sus datos del Kardex
+    $insumos = $insumos->map(function ($insumo) use ($selectedMonth, $selectedYear) {
+        $insumo->cantidad_inicial_mes = $this->calcularCantidadInicialMes($insumo, $selectedMonth, $selectedYear);
+        $insumo->ingresos_mes = $insumo->ingresosDelMes($selectedMonth, $selectedYear);
+        $insumo->egresos_mes = $insumo->egresosDelMes($selectedMonth, $selectedYear);
+        $insumo->saldo_final_mes = $insumo->cantidad_inicial_mes + $insumo->ingresos_mes - $insumo->egresos_mes;
+        return $insumo;
+    });
+
+    // Pasar los datos a la vista
+    return view('crud.kardex', compact('insumos', 'selectedMonth', 'selectedYear', 'categorias'));
+}
 
 
     private function calcularCantidadInicialMes($insumo, $mes, $anno)
@@ -58,8 +59,6 @@ class KardexController extends Controller
         $kardexAnterior = $insumo->kardex()->where('mes', $mesAnterior)->where('anno', $annoAnterior)->first();
         return $kardexAnterior ? $kardexAnterior->saldo : 0;
     }
-
-
 
     /**
      * Show the form for creating a new resource.

@@ -21,11 +21,14 @@ use App\Http\Controllers\UsuarioController;
 use Faker\Guesser\Name;
 use Illuminate\Support\Facades\Route;
 use JeroenNoten\LaravelAdminLte\View\Components\Widget\ProfileColItem;
+use PhpParser\Node\Expr\FuncCall;
 
 Route::get('/', function () {
     return view('auth.login');
 });
 
+
+Route::middleware(['auth'])->group(function (){
 Route::get('/dashboard', [DashboardController::class, 'index']);
 Route::resource('categoria', CategoriaController::class);
 Route::resource('servicio', ServicioController::class);
@@ -40,11 +43,10 @@ Route::resource('usuario', UsuarioController::class);
 Route::resource('rol', RolController::class);
 Route::resource('permiso', PermisoController::class);
 Route::resource('kardex', KardexController::class);
+Route::resource('pedido', PedidoController::class);
+});
 
-
-
-
-
+Route::get('/obtener-detalles-pedido/{idPedido}', [PedidoController::class, 'obtenerDetallesPedido']);
 Route::get('/insumo/search', [InsumoController::class, 'search'])->name('insumo.search');
 Route::get('/get-stock', [EntregaController::class, 'getStock'])->name('get-stock');
 Route::get('/get-caracteristicas', [EntregaController::class, 'getCaracteristicas']);

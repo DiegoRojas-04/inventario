@@ -78,9 +78,17 @@
             </div>
             <div class="card mb-4">
                 <div class="card-header text-center">
-                    <h5>Detalle de Entrega</h5>
+                    <h4>Detalle de Entrega</h4>
                 </div>
                 <div class="card-body table-responsive">
+                    <div class="mb-3">
+                        <button type="button" class="btn btn-success">
+                            <i class="fa fa-file-excel" aria-hidden="true"></i>
+                        </button>
+                        <button type="button" class="btn btn-danger">
+                            <i class="fa fa-file-pdf" aria-hidden="true"></i>
+                        </button>
+                    </div>
                     <table class="table table-striped text-center">
                         <thead class="bg-primary text-white">
                             <tr class="text-center">
@@ -101,7 +109,7 @@
                                     <td>{{ $item->presentacione->nombre }}</td>
                                     <td>{{ $item->pivot->invima }}</td>
                                     <td>{{ $item->pivot->lote }}</td>
-                                    <td>{{ $item->pivot->vencimiento}}</td>
+                                    <td>{{ $item->pivot->vencimiento }}</td>
                                     <td>{{ $item->pivot->cantidad }}</td>
                                 </tr>
                             @endforeach

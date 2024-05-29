@@ -31,6 +31,16 @@ class Entrega extends Model
         return $this->belongsTo(Comprobante::class);
     }
     
+    public function insumoCaracteristicas()
+    {
+        return $this->hasManyThrough(
+            InsumoCaracteristica::class,
+            Insumo::class,
+            'id',
+            'insumo_id'
+        )->whereIn('insumo_id', $this->insumos->pluck('id'));
+    }
+    
     public function insumos()
     {
         return $this->belongsToMany(Insumo::class)

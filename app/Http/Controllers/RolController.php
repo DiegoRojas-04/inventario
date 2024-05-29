@@ -3,12 +3,24 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Support\Facades\Cache;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class RolController extends Controller
+//  implements HasMiddleware
 {
+    // public static function middleware(): array
+    // {
+    //     return [
+    //         'auth',
+    //         new Middleware('can:insumo'),
+    //         // new Middleware('Administrador', except: ['store']),
+    //     ];
+    // }
+
     /**
      * Display a listing of the resource.
      */

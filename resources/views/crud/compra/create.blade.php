@@ -169,6 +169,7 @@
     href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/css/bootstrap-select.min.css">
 @section('js')
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js"></script>
+    
     <script>
         $(document).ready(function() {
             // Función para manejar el cambio en el select
@@ -264,12 +265,22 @@
                         lote + '</td>' +
                         '<td><input type="hidden" name="arraycaracteristicas[' + cont + '][vencimiento]" value="' +
                         vencimiento + '">' + vencimiento + '</td>' +
-                        '<td><input type="hidden" name="arraycantidad[]" value="' + cantidad + '">' + cantidad + '</td>' +
+                        '<td>' +
+
+                        '<div class="input-group">' +
+                        '<button class="btn btn-outline-danger btn-sm" type="button" onclick="disminuirCantidad(' + cont +
+                        ')"><i class="fa fa-minus"></i></button>' +
+                        '<input type="number" name="arraycantidad[]" value="' + cantidad +
+                        '" class="form-control text-center" readonly>' +
+                        '<button class="btn btn-outline-success btn-sm" type="button" onclick="aumentarCantidad(' + cont +
+                        ')"><i class="fa fa-plus"></i></button>' +
+                        '</div>' +
+                        '</td>' +
                         '<td><button class="btn btn-danger" type="button" onClick="eliminarInsumo(' + cont +
                         ')"><i class="fa fa-trash"></i></button></td>' +
                         '</tr>';
 
-                    $('#tabla_detalle tbody').prepend(fila);
+                    $('#tabla_detalle tbody').append(fila);
                     limpiarCampos();
                     cont++;
                     total += cantidad;
@@ -281,8 +292,6 @@
                 showModal('Campos Obligatorios')
             }
         }
-
-
 
         function limpiarCampos() {
             let selectNombre = $('#nombre');
@@ -302,6 +311,28 @@
             total -= cantidadEliminada;
             $('#fila' + indice).remove();
             $('#total').html(total);
+        }
+
+        function aumentarCantidad(indice) {
+            let cantidadInput = $('#fila' + indice).find('input[name="arraycantidad[]"]');
+            let cantidad = parseInt(cantidadInput.val());
+            cantidad++;
+            cantidadInput.val(cantidad);
+            total++;
+            $('#total').html(total);
+        }
+
+        function disminuirCantidad(indice) {
+            let cantidadInput = $('#fila' + indice).find('input[name="arraycantidad[]"]');
+            let cantidad = parseInt(cantidadInput.val());
+            if (cantidad > 1) {
+                cantidad--;
+                cantidadInput.val(cantidad);
+                total--;
+                $('#total').html(total);
+            } else {
+                eliminarInsumo(indice);
+            }
         }
 
         function showModal(message, icon = 'error') {

@@ -65,13 +65,20 @@
                 </div>
             </div>
 
-
-
             <div class="card mb-4">
+
                 <div class="card-header text-center">
-                    <h5>Detalle de Compra</h5>
+                    <h4>Detalle de Compra</h4>
                 </div>
                 <div class="card-body table-responsive">
+                    <div class="mb-3">
+                        <button type="button" class="btn btn-success">
+                            <i class="fa fa-file-excel" aria-hidden="true"></i>
+                        </button>
+                        <button type="button" class="btn btn-danger">
+                            <i class="fa fa-file-pdf" aria-hidden="true"></i>
+                        </button>
+                    </div>
                     <table class="table table-striped text-center">
                         <thead class="bg-primary text-white">
                             <tr class="text-center">
@@ -96,12 +103,13 @@
                                         <td>{{ $caracteristica->vencimiento }}</td>
                                         <td>{{ $caracteristica->cantidad_compra }}</td>
                                     </tr>
-                                @endforeach 
+                                @endforeach
                             @endforeach
                         </tbody>
                     </table>
+
                 </div>
-            </div> 
+            </div>
         </div>
     @stop
 

@@ -76,6 +76,13 @@ class Insumo extends Model
     {
         return $this->hasMany(InsumoCaracteristica::class, 'insumo_id');
     }
+    
+    // Definición de la relación entregaInsumo
+    public function entregaInsumo()
+    {
+        return $this->hasMany(EntregaInsumo::class, 'insumo_id');
+    }
+
     public function detallesTransaccion()
     {
         return $this->hasMany(DetalleTransaccion::class, 'insumo_id');

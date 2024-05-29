@@ -68,12 +68,10 @@
 
     <br>
 @stop
-
 @section('content')
     <div class="card">
         <div class="card-header">
             <form id="filterForm" method="GET" action="{{ url('/insumo') }}">
-                {{-- @csrf  --}}
                 <div class="row g-3">
                     <div class="col-md-1">
                         <select class="form-control" id="pageSize" name="page_size">
@@ -106,8 +104,9 @@
                         <input type="text" class="form-control" placeholder="Buscar" id="search" name="search"
                             value="{{ request('search') }}">
                         <div class="input-group-prepend">
-                            <button type="submit" class="btn" aria-disabled="true" style="pointer-events: none;"><i
-                                    class="fas fa-search"></i></button>
+                            <button type="submit" class="btn" aria-disabled="true" style="pointer-events: none;">
+                                <i class="fas fa-search"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -184,7 +183,6 @@
             {{ $insumos->appends(request()->query())->links() }}
         </div>
     </div>
-
     @foreach ($insumos as $insumo)
         <div class="modal fade bd-example-modal-lg" id="modalInsumo-{{ $insumo->id }}" tabindex="-1"
             aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -303,6 +301,26 @@
                 const pageSize = this.value;
                 document.getElementById('pageSizeHidden').value = pageSize; // Actualizar el campo oculto
                 document.getElementById('filterForm').submit(); // Enviar el formulario
+            });
+        });
+
+        //buscador automatic
+        $(document).ready(function() {
+
+            $("#search").keyup(function() {
+
+                _this = this;
+
+                $.each($("#datos tbody tr"), function() {
+
+                    if ($(this).text().toLowerCase().indexOf($(_this).val().toLowerCase()) === -1)
+
+                        $(this).hide();
+
+                    else
+
+                        $(this).show();
+                });
             });
         });
     </script>

@@ -58,7 +58,7 @@
                                     <table class="table table-hover" id="tabla_detalle">
                                         <thead class="bg-primary text-white text-center">
                                             <tr>
-                                                <th>#</th>
+                                                {{-- <th>#</th> --}}
                                                 <th>Insumo</th>
                                                 <th>Invima</th>
                                                 <th>Lote</th>
@@ -143,7 +143,7 @@
                             </div>
 
                             <input type="hidden" name="user_id" value="{{ auth()->id() }}">
-                            
+
                             <div class="col-md-12 mb-2 text-center">
                                 <button type="button" class="btn btn-success"
                                     onclick="confirmAndSubmit()">Guardar</button>
@@ -284,7 +284,7 @@
                 if (cantidad > 0 && (cantidad % 1 == 0)) {
                     if (cantidad <= stockActual) {
                         let fila = '<tr id="fila' + cont + '">' +
-                            '<th>' + (cont + 1) + '</th>' +
+                            // '<th>' + (cont + 1) + '</th>' +
                             '<td><input type="hidden" name="arrayidinsumo[]" value="' + idInsumo + '">' +
                             nombreInsumo +
                             '</td>' +
@@ -296,16 +296,25 @@
                             '<td><input type="hidden" name="arrayvencimiento[]" value="' + vencimiento + '">' +
                             vencimiento + // Agregado
                             '</td>' +
-                            '<td><input type="hidden" name="arraycantidad[]" value="' + cantidad + '">' + cantidad +
+                            '<td>' +
+
+                            '<div class="input-group">' +
+                            '<button class="btn btn-outline-danger btn-sm" type="button" onClick="restarCantidad(' + cont +
+                            ')"><i class="fa fa-minus"></i></button>' +
+                            '<input type="number" name="arraycantidad[]" id="cantidad' + cont + '" value="' + cantidad +
+                            '" class="form-control" readonly>' +
+                            '<button class="btn btn-outline-success btn-sm" type="button" onClick="sumarCantidad(' + cont + ', ' +
+                            stockActual + ')"><i class="fa fa-plus"></i></button>' +
+                            '</div>' +
                             '</td>' +
                             '<td><button class="btn btn-danger" type="button" onClick="eliminarInsumo(' + cont +
                             ')"><i class="fa fa-trash"></i></button></td>' +
                             '</tr>';
 
-                        $('#tabla_detalle tbody').prepend(fila);
+                        $('#tabla_detalle tbody').append(fila);
                         limpiarCampos();
                         cont++;
-                        total += cantidad;
+                        total += cantidad; 
                         $('#total').html(total);
                     } else {
                         showModal('Cantidad No Disponible');
@@ -318,6 +327,32 @@
             }
         }
 
+        function sumarCantidad(indice, stockActual) {
+            let cantidadInput = $('#cantidad' + indice);
+            let cantidad = parseInt(cantidadInput.val());
+            if (cantidad < stockActual) {
+                cantidadInput.val(cantidad + 1);
+                // Actualizar el total y la cantidad
+                total++;
+                $('#total').html(total);
+            } else {
+                showModal('Cantidad Insuficiente');
+            }
+        }
+
+        function restarCantidad(indice) {
+            let cantidadInput = $('#cantidad' + indice);
+            let cantidad = parseInt(cantidadInput.val());
+            if (cantidad > 1) {
+                cantidadInput.val(cantidad - 1);
+                // Actualizar el total y la cantidad
+                total--;
+                $('#total').html(total);
+            } else {
+                // Si la cantidad es 1, eliminar el insumo de la tabla
+                eliminarInsumo(indice);
+            }
+        }
 
 
         function eliminarInsumo(indice) {
@@ -394,3 +429,8 @@
         }
     </script>
 @stop
+
+{{-- quiero ahora que cuando se agregue un insumo a la tabla, en cantidad a
+     cadalado salgan botones de mas y menos donde pueda agregar mas cantidad 
+     de ese insumo ya agregado pero que no se pase de la cantidad que tiene y
+     le de un mensaje de cantidad insuficiente si quiere pasarse mas de lo que tiene en cantidad  --}}

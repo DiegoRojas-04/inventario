@@ -11,14 +11,26 @@ use App\Models\Marca;
 use App\Models\Presentacione;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class InsumoController extends Controller
+class InsumoController extends Controller 
+// implements HasMiddleware
 {
+
+  // public static function middleware(): array
+  // {
+  //     return [
+  //         'auth',
+  //         new Middleware('can:insumo', except: ['index']),
+  //         // new Middleware('Administrador', except: ['store']),
+  //     ];
+  // }
     /**
      * Display a listing of the resource.
      */
 
-   public function index(Request $request)
+ public function index(Request $request)
 {
     $query = Insumo::query();
     $categorias = Categoria::all();
@@ -27,12 +39,21 @@ class InsumoController extends Controller
     if ($request->has('id_categoria') && !empty($request->id_categoria)) {
         $query->where('id_categoria', $request->id_categoria);
     }
-    // ->orderBy('nombre', 'asc')
+
+    // Filtrar por término de búsqueda si se proporciona
+    if ($request->has('search') && !empty($request->search)) {
+        $search = $request->search;
+        $query->where(function($q) use ($search) {
+            $q->where('nombre', 'LIKE', "%$search%")
+              ->orWhere('descripcion', 'LIKE', "%$search%");
+        });
+    }
+
     // Filtrar y ordenar por estado (primero estado 1, luego estado 0)
     $insumos = $query->orderBy('estado', 'desc')->paginate($request->input('page_size', 10));
 
     return view('crud.insumo.index', compact('insumos', 'categorias'));
-} 
+}
     /**
      * Show the form for creating a new resource.
      */

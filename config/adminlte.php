@@ -473,6 +473,7 @@ return [
             'text' => 'Kardex',
             'url' => 'kardex',
             'icon' => 'far fa fa-book',
+            'can' => 'Kardex',
         ],
 
         ['header' => 'Acciones',
@@ -510,6 +511,23 @@ return [
                 [
                     'text' => 'Realizar Entrega',
                     'url' => 'entrega/create',
+                ],
+            ],
+
+        ], 
+        
+        [
+            'text' => 'Pedidos',
+            'url' => 'pedido',
+            'icon' => 'far fa fa-comments',
+            'submenu' => [
+                [
+                    'text' => 'Pedido',
+                    'url' => 'pedido',
+                ],
+                [
+                    'text' => 'Realizar Pedido',
+                    'url' => 'pedido/create',
                 ],
             ],
 

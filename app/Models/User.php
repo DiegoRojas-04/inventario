@@ -30,7 +30,12 @@ class User extends Authenticatable
         'email',
         'password',
     ];
-
+    
+    public function pedidos()
+    {
+        return $this->hasMany(Pedido::class, 'servicio_id');
+    }
+    
     public function entregas(){
         return $this->hasMany(Entrega::class);
     }
@@ -77,6 +82,6 @@ class User extends Authenticatable
     }
 
     public function adminlte_profile_url(){
-        return 'profile/username';
+        return 'perfil';
     }
 }
